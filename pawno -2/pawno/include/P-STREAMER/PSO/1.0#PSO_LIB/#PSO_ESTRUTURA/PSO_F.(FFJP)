@@ -1,0 +1,217 @@
+/*
+*
+*	-= PSO ESTRUTURA =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pso_MudarPosObjeto(psoid, Float:x, Float:y, Float:z)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PSO_Pos][0] = x,
+	PSO_Objetos[psoid][PSO_Pos][1] = y,
+	PSO_Objetos[psoid][PSO_Pos][2] = z;
+	if(PSO_Objetos[psoid][PSO_M]) PSO_Objetos[psoid][PSO_M] = 0.0;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+	    if(ps_IsPlayerConnected(j))
+	    {
+			if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+			{
+				if(PSO_Objetos[psoid][PSO_M])
+				{
+					StopPlayerObject(j, PSO_Jogador[j][PSO_OID][psoid]);
+     				PSO_Jogador[j][PSO_Ms][psoid] = false;
+				}
+                SetPlayerObjectPos(j, PSO_Jogador[j][PSO_OID][psoid], x, y, z);
+			}
+		}
+	}
+	return 1;
+}
+
+stock pso_MudarRotObjeto(psoid, Float:_rx, Float:_ry, Float:_rz)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PSO_Pos][3] = _rx,
+	PSO_Objetos[psoid][PSO_Pos][4] = _ry,
+	PSO_Objetos[psoid][PSO_Pos][5] = _rz;
+	if(PSO_Objetos[psoid][PSO_M]) PSO_Objetos[psoid][PSO_M] = 0.0;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+	    if(ps_IsPlayerConnected(j))
+	    {
+			if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+			{
+				if(PSO_Objetos[psoid][PSO_M])
+				{
+					StopPlayerObject(j, PSO_Jogador[j][PSO_OID][psoid]);
+     				PSO_Jogador[j][PSO_Ms][psoid] = false;
+				}
+                SetPlayerObjectRot(j, PSO_Jogador[j][PSO_OID][psoid], _rx, _ry, _rz);
+			}
+		}
+	}
+	return 1;
+}
+
+stock pso_MudarModeloObjeto(psoid, novo_modeloid)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PSO_ModeloID] = novo_modeloid;
+	if(PSO_Objetos[psoid][PSO_M]) PSO_Objetos[psoid][PSO_M] = 0.0;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+	    if(ps_IsPlayerConnected(j))
+	    {
+			if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+			{
+				PSO_RETIRAR_OBJETO_JOGADOR(j, psoid);
+			}
+		}
+	}
+	return 1;
+}
+
+stock pso_MudarVirtualWorldObjeto(psoid, novo_virtualworld)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PSO_VW] = novo_virtualworld;
+	return 1;
+}
+
+stock pso_MudarRaioStreamObjeto(psoid, Float:novo_raiostream)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PMS_RaioStream] = novo_raiostream;
+	return 1;
+}
+
+stock pso_MudarJogadorIDObjeto(psoid, novo_playerid)
+{
+	if(!PSO_Objetos[psoid][PSO_S] || novo_playerid < -1) return 0;
+	PSO_Objetos[psoid][PSO_JID] = novo_playerid;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+	    if(ps_IsPlayerConnected(j))
+	    {
+			if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+			{
+				PSO_RETIRAR_OBJETO_JOGADOR(j, psoid);
+			}
+		}
+	}
+	return 1;
+}
+
+stock PSO_MudarPos(psoid, tipopos, Float:novapos)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+    PSO_Objetos[psoid][PSO_Pos][tipopos] = novapos;
+    return 1;
+}
+
+stock pso_PegarPosObjeto(psoid, &Float:x, &Float:y, &Float:z)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	x = PSO_Objetos[psoid][PSO_Pos][0];
+	y = PSO_Objetos[psoid][PSO_Pos][1];
+	z = PSO_Objetos[psoid][PSO_Pos][2];
+	return 1;
+}
+
+stock pso_PegarRotObjeto(psoid, &Float:_rx, &Float:_ry, &Float:_rz)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	_rx = PSO_Objetos[psoid][PSO_Pos][3];
+	_ry = PSO_Objetos[psoid][PSO_Pos][4];
+	_rz = PSO_Objetos[psoid][PSO_Pos][5];
+	return 1;
+}
+
+stock pso_PegarModeloObjeto(psoid) return (!PSO_Objetos[psoid][PSO_S]) ? 0 : PSO_Objetos[psoid][PSO_ModeloID];
+stock pso_PegarJogadorIDObjeto(psoid) return (!PSO_Objetos[psoid][PSO_S]) ? -1 : PSO_Objetos[psoid][PSO_JID];
+stock pso_ObjetoAtivo(psoid) return PSO_Objetos[psoid][PSO_S];
+stock Float:pso_PegarRaioStreamObjeto(psoid) return PSO_Objetos[psoid][PMS_RaioStream];
+stock pso_PegarVirtualWorldObjeto(psoid) return (!PSO_Objetos[psoid][PSO_S]) ? -2 : PSO_Objetos[psoid][PSO_VW];
+
+stock pso_CriarObjetosDoArquivo(arquivo[])
+{
+	if(!fexist(arquivo))
+	{
+	    printf("[PSO]: pso_CriarObjetosDoArquivo(%s) - arquivo nao existe!", arquivo);
+		return 0;
+	}
+	new
+		str[256],
+		File:ArqL,
+		ini,
+		busca,
+		objeto_vw,
+		objeto_modelo,
+		Float:objeto_x,
+		Float:objeto_y,
+		Float:objeto_z,
+		Float:objeto__rx,
+		Float:objeto__ry,
+		Float:objeto__rz,
+		Float:objeto_raio,
+		tempvalor[16],
+		TotalObjetosLidos;
+
+   	ArqL = fopen(arquivo, io_read);
+	while(fread(ArqL, str, sizeof(str), false))
+	{
+		busca = strfind(str, "pso_CriarObjeto(", true);
+		if(busca != -1)
+		{
+		    ini = busca+strlen("pso_CriarObjeto(");
+
+			objeto_modelo = strval(ps_PegarValorStr(str, ini));
+			objeto_x = floatstr(ps_PegarValorStr(str, ini));
+			objeto_y = floatstr(ps_PegarValorStr(str, ini));
+			objeto_z = floatstr(ps_PegarValorStr(str, ini));
+			objeto__rx = floatstr(ps_PegarValorStr(str, ini));
+		    objeto__ry = floatstr(ps_PegarValorStr(str, ini));
+			objeto__rz = floatstr(ps_PegarValorStr(str, ini));
+			tempvalor = floatstr(ps_PegarValorStr(str, ini));
+			if(strlen(tempvalor)) objeto_raio = strval(tempvalor);
+			else objeto_raio = PSO_RAIO_STREAM_PADRAO;
+		    tempvalor = ps_PegarValorStr(str, ini);
+			if(strlen(tempvalor)) objeto_vw = strval(tempvalor);
+			else objeto_vw = -1;
+
+		    pso_CriarObjeto(objeto_modelo, objeto_x, objeto_y, objeto_z, objeto__rx, objeto__ry, objeto__rz, objeto_raio, objeto_vw);
+		    TotalObjetosLidos++;
+		}
+		else
+		{
+		    new objeto_playerid;
+			busca = strfind(str, "pso_CriarObjetoJogador(", true);
+			if(busca != -1)
+			{
+			    ini = busca+strlen("pso_CriarObjetoJogador(");
+			    objeto_playerid = strval(ps_PegarValorStr(str, ini));
+
+				objeto_modelo = strval(ps_PegarValorStr(str, ini));
+				objeto_x = floatstr(ps_PegarValorStr(str, ini));
+				objeto_y = floatstr(ps_PegarValorStr(str, ini));
+				objeto_z = floatstr(ps_PegarValorStr(str, ini));
+				objeto__rx = floatstr(ps_PegarValorStr(str, ini));
+			    objeto__ry = floatstr(ps_PegarValorStr(str, ini));
+				objeto__rz = floatstr(ps_PegarValorStr(str, ini));
+				tempvalor = floatstr(ps_PegarValorStr(str, ini));
+				if(strlen(tempvalor)) objeto_raio = strval(tempvalor);
+				else objeto_raio = PSO_RAIO_STREAM_PADRAO;
+				tempvalor = ps_PegarValorStr(str, ini);
+				if(strlen(tempvalor)) objeto_vw = strval(tempvalor);
+				else objeto_vw = -1;
+
+    			pso_CriarObjetoJogador(objeto_playerid, objeto_modelo, objeto_x, objeto_y, objeto_z, objeto__rx, objeto__ry, objeto__rz, objeto_raio, objeto_vw);
+			    TotalObjetosLidos++;
+			}
+		}
+	}
+	return TotalObjetosLidos;
+}

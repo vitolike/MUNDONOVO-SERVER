@@ -1,0 +1,98 @@
+/*
+*
+*	-= PGP ESTRUTURA =-
+*	Protioso Gerenciamento de Pickups
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pgp_Mostrar3DTextLabel(playerid, pgpid)
+{
+	if(!pgp_PickupExiste(pgpid) || !ps_IsPlayerConnected(playerid) || PGP_JogadorDef[playerid][PGP_TOTAL3DV]+1 > MAX_3DTEXT_PLAYER) return 0;
+	PGP_JogadorDef[playerid][PGP_3DALID][pgpid] = CreatePlayer3DTextLabel(playerid,
+	PGP_PickupDef[pgpid][PGP_MSG3D], PGP_PickupDef[pgpid][PGP_3DCOR], PGP_PickupDef[pgpid][PGP_X],
+	PGP_PickupDef[pgpid][PGP_Y], PGP_PickupDef[pgpid][PGP_Z]+PGP_PickupDef[pgpid][PGP_3DEIXOZ], PGP_PickupDef[pgpid][PGP_RaioStream]);
+	PGP_JogadorDef[playerid][PGP_V3DL][pgpid] = true;
+	PGP_JogadorDef[playerid][PGP_TOTAL3DV]++;
+	return 1;
+}
+
+stock pgp_Retirar3DTextLabel(playerid, pgpid)
+{
+	if(!PGP_JogadorDef[playerid][PGP_V3DL][pgpid]) return 0;
+	DeletePlayer3DTextLabel(playerid, PGP_JogadorDef[playerid][PGP_3DALID][pgpid]);
+	PGP_JogadorDef[playerid][PGP_V3DL][pgpid] = false;
+	PGP_JogadorDef[playerid][PGP_TOTAL3DV]--;
+	return 1;
+}
+
+#define pgp_Retirar3DTextLabelTodos for(new j; j < MAX_PLAYERS; j++) if(PGP_JogadorDef[j][PGP_PickProx] == pgpid) pgp_Retirar3DTextLabel(j, pgpid)
+
+stock pgp_Desanexar3DTextLabel(pgpid)
+{
+	if(!pgp_PickupExiste(pgpid) || !PGP_PickupDef[pgpid][PGP_S3DL]) return 0;
+	pgp_Retirar3DTextLabelTodos;
+	PGP_PickupDef[pgpid][PGP_S3DL] = false;
+	return 1;
+}
+
+stock pgp_Atualizar3DTextLabel(pgpid, msg[], cormsg) return pgp_Anexar3DTextLabel(pgpid, msg, cormsg, PGP_PickupDef[pgpid][PGP_3DEIXOZ]);
+
+#define pgp_Atualizar3DTextLabelTodo pgp_Anexar3DTextLabel
+
+stock pgp_Anexar3DTextLabel(pgpid, msg[], cormsg, Float:eixoz_pickup = 0.50)
+{
+	if(!pgp_PickupExiste(pgpid) || strlen(msg) > MAX_PGP3DTEXTLABEL_MSG) return 0;
+	psf_CopiarStr(PGP_PickupDef[pgpid][PGP_MSG3D], msg);
+	PGP_PickupDef[pgpid][PGP_3DEIXOZ] = eixoz_pickup;
+	PGP_PickupDef[pgpid][PGP_3DCOR] = cormsg;
+	if(PGP_PickupDef[pgpid][PGP_S3DL]) pgp_Retirar3DTextLabelTodos;
+	PGP_PickupDef[pgpid][PGP_S3DL] = true;
+	return 1;
+}
+
+stock pgp_AdicionarPickup(PGP_Modeloid, tipo, Float:x, Float:y, Float:z, virtualworld = 0, Float:raio_stream = PGP_RAIO_STREAM_PADRAO)
+{
+	if(virtualworld == -1)
+	{
+   		 print("[PGP]: PGP nao pode criar pickup's no virtualworld id -1 (para todos)! ");
+		 return 0;
+	}
+	new pnovoid = pgp_ProcurarCampoLivre();
+	if(!pnovoid)
+	{
+   		 printf("[PGP]: Impossivel criar pickup! MAX_PGP excedido (%d).", MAX_PGP);
+		 return 0;
+	}
+    gNumPGP++;
+	PGP_PickupDef[pnovoid][PGP_X] = x;
+	PGP_PickupDef[pnovoid][PGP_Y] = y;
+	PGP_PickupDef[pnovoid][PGP_Z] = z;
+	PGP_PickupDef[pnovoid][PGP_VW] = virtualworld;
+	PGP_PickupDef[pnovoid][PGP_RaioStream] = raio_stream;
+	PGP_PickupDef[pnovoid][PGP_Modelo] = PGP_Modeloid;
+	PGP_PickupDef[pnovoid][PGP_PTIPO] = tipo;
+	PGP_PickupDef[pnovoid][PGP_SPICKUP][0] = true;
+	PGP_PickupDef[pnovoid][PGP_SPICKUP][1] = true;
+	PGP_ChecarTimer();
+	return pnovoid;
+}
+
+stock pgp_ProcurarCampoLivre()
+{
+	for(new p=1; p < MAX_PGP; p++)
+	{
+	    if(!PGP_PickupDef[p][PGP_SPICKUP][1]) return p;
+	}
+	return 0;
+}
+
+public pgp_DestruirPickup(pgpid)
+{
+	if(pgp_DesativarPickup(pgpid))
+	{
+		PGP_PickupDef[pgpid][PGP_SPICKUP][1] = false;
+		return 1;
+	}
+	return 0;
+}

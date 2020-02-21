@@ -1,0 +1,88 @@
+/*
+*
+*	-= PSF CODIFICAÇÃO BASE =-
+*	Protioso String Funções
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock psf_iFStr(str[MAX_PCOD_CHAR], taxa = TAXA_MEDIANA)
+{
+	new	ret[2];
+	for(new c; str[c]; c++) psf_adT(str[c], 1);
+	ret[0] = psf_FormatoStr(str, psf_fT(taxa));
+	if(ret[0] > 0) while(ret[1] < ret[0]) psf_dC(str, ret[1], ret[0]);
+	return ret[0];
+}
+
+stock psf_FormatoStr(str[], tf)
+{
+	new ret;
+	if(strlen(str) > tf)
+	{
+		new sf = strlen(str);
+		while(sf > tf)
+		{
+			sf--;
+            ret++;
+		}
+	}
+	return ret;
+}
+
+stock psf_RegraDupla(str[], cb, cc)
+{
+	new	nc[256];
+	psf_CopiarStr(nc, str);
+	new busca = strfind(nc, psf_CharStr(cb), false);
+	if(busca > -1) strins(nc, psf_CharStr(cc), strlen(nc));
+	return nc;
+}
+
+stock psf_AdF(str[MAX_PCOD_CHAR], qad)
+{
+	new ad;
+	while(ad < qad)
+	{
+		strins(str, psf_CharStr(psf_MaCA(str[strlen(str)-ad], 1)), 0);
+		ad++;
+	}
+}
+
+stock psf_adT(&c, nA = 3)
+{
+	new tipo = 2;
+	if(psf_aCA(c)) tipo = 1;
+	c+= c/3+nA;
+	if(tipo == 1)
+	{
+		while(!psf_aCA(c)) psf_FormularaCa(c);
+	}
+	else if(tipo == 2)
+	{
+		while(!psf_nCA(c)) psf_FormularnCa(c);
+	}
+	return c;
+}
+
+stock psf_PCODSubstituirChar(str[], cs[], ct[], bool:ler_case_sensitive = true)
+{
+#pragma tabsize 0
+	new
+		nc[MAX_PCOD_CHAR],
+	psf_MSC;
+}
+
+stock psf_RegraTripla(str[MAX_PCOD_CHAR]) for(new cm; cm < 3; cm++) strcat(str, psf_CharStr(psf_MaCA(str[cm], cm+1)));
+
+stock psf_RegraQuarta(str[MAX_PCOD_CHAR])
+{
+	new	temp_str[256];
+	for(new s = 4; s < 8; s++)
+	{
+		psf_CopiarStrL(temp_str, str, 0, s),
+		strdel(str, 0, s),
+		temp_str = psf_InverterStr_PCOD(temp_str),
+		strins(str, temp_str, strlen(str)/2);
+	}
+}

@@ -1,0 +1,269 @@
+ Protioso String Funções (PSF) 1.2F3, por [VGS]Protioso_OC
+
+ 
+	Introdução
+
+ PSF é um include profissional e simples ao mesmo tempo, que lhe facilitará e lhe ajudará muito 
+em qualquer tipo de script em linguagem pawn. Um exemplo sutil é sua poderosa ferramenta de CODIFICAÇÃO 
+(PCOD), que pode criar textos codificados (PCODStr) de 14 à 50 caracteres. Fica ao seu critério escolher
+sua TAXA de codificação.
+ Você também pode transformar textos em textos com formato para serem usados em TextDraw/GameText.
+ Outras ferramentas importantes são as funções psf_Filtrar, psf_ReverterFiltro, psf_SubstituirChar,
+psf_strtok (e derivações), vide explicação de funções. 
+
+
+
+	Explicando funções
+
+
+ CODIFICAÇÃO
+	
+-   psf_PCODStr(str[], taxa)
+ 
+ Origina uma nova string, codificada, a partir da determinada. Ideal para senhas.
+ str: String (texto) a ser codificado;
+ taxa: Taxa de codificação, ou seja, o tipo de codificação.
+       Existem 4 tipos:
+			TAXA_BAIXA - 14 caracteres
+			TAXA_MEDIANA - 26 caracteres
+			TAXA_ALTA - 38 caracteres
+			TAXA_MAXIMA - 50 caracteres
+
+ Retorna: Nova string, codificada.
+
+
+-   psf_PCODNumero(numeral)
+
+ Origina um novo numeral, codificado, a partir do determinado.
+ numeral: Numeral a ser codificado;
+
+ Retorna: Novo numeral, codificado.
+	 
+
+ Funções gerais
+
+-   psf_Filtrar(str[])
+
+ Filtra uma string, apenas retirando caracteres inadequados.
+ str: String a ser filtrada.
+ Retorna: Nova string filtrada.
+
+
+-   psf_ReverterFiltro(str[])
+
+ Reverte o filtro de uma string já filtrada pela função acima, recolocando caracteres retirados anteriormente.
+ str: String a ser manipulada.
+ Retorna: Nova string com filtro revertido.
+
+
+-   psf_CharFiltrado(c[3])
+
+ Checa se o conjunto de caracteres em questão, foi filtrado.
+ c: Conjunto de caracteres (máximo 2).
+ Retorna: 1 se estiver filtrado e 0 caso contrário.
+
+
+-   psf_InverterStr(str[256])
+
+ Inverte um texto/string.
+ str: String a ter seus caracteres invertidos.
+
+
+-   psf_ParteExiste(str[], parte[])
+
+ Checa se um conjunto de caracteres/string existe em outra.
+ str: String a ser avaliada na busca;
+ parte: Conjunto de caracteres/string a ser buscado.
+ Retorna: 1 se existir e 0 caso contrário.
+
+
+-   psf_SubstituirChar(str[], cs[], ct[], bool:ler_case_sensitive)
+
+ Substitui caracteres em uma string.
+ str: String a ser avaliada;
+ cs: Caractere/conjunto de caracteres a ser substituído;
+ ct: Caractere/conjunto de caracteres a ser colocado no lugar substituído;
+ ler_case_sensitive: Considerar case sensitive (true sim e false não).
+ Retorna: Nova string com as devidas substituições.
+
+
+-   psf_CharStr(c)
+
+ Transforma um caractere em string.
+ c: Caractere a ser transformado.
+ Retorna: Caractere em forma de string.
+
+
+-   psf_FloatStr(Float:f)
+
+ Transforma um ponto flutuante (float) em string.
+ f: Valor a ser transformado.
+ Retorna: Valor em forma de string.
+
+
+-   psf_IntStr(i)
+
+ Transforma um valor inteiro (integer) em string.
+ i: Valor a ser transformado.
+ Retorna: Valor em forma de string.
+
+
+-   psf_CopiarStr(str_recebe[], str_origem[])
+
+ Copia o conteúdo de uma string para a string recebedora.
+ str_recebe: String que irá receber o conteúdo a ser copiado;
+ str_origem: String fonte, que terá seu conteúdo copiado para str_recebe.
+ Esta função não retorna a valor algum.
+
+
+-   psf_CopiarStrL(str_recebe[], str_origem[], pos_inicial_origem, pos_final_origem)
+
+ Copia o conteúdo, limitado entre posições (inicial e final), de uma string para uma string recebedora.
+ str_recebe: String que irá receber o conteúdo a ser copiado;
+ str_origem: String fonte, que terá seu conteúdo copiado para str_recebe;
+ pos_inicial_origem: Posição inicial que iniciará a copia para a str_recebe; 
+ pos_final_origem: Posição final que finalizará a copia para a str_recebe; 
+ Esta função não retorna a valor algum.
+
+
+-   psf_PosChar(str[], cC[], quantia_procurada, bool:ler_case_sensitive = true)
+
+ Procura a posição de um caractere dentro de um limite procurado.
+ str: String que o caractere será procurado;
+ cC: Caractere a ser procurado;
+ quantia_procurada: Limite/quantia para ser procurada;
+ ler_case_sensitive: Diferenciar maiúscula de minúscula.
+ Retorna: A posição encontrada.
+
+
+-   psf_ContagemChar(str[], cC[], bool:ler_case_sensitive = true)
+
+ Conta quantos caracteres existem em tal string.
+ str: String a ter os caracteres, determinados, contados;
+ cC: Caractere a ser contado;
+ ler_case_sensitive: Diferenciar maiúscula de minúscula.
+ Retorna: A quantia de caracteres encontrado.
+
+
+-   psf_FormatarStrTexto(str[])
+
+ Padroniza o texto para formato de TextDraw/GameText.
+ str: Texto/string a ser formatada.
+ Retorna: A string formatada, com os devidos caracteres correspondentes para TextDraw/GameText.
+
+-   psf_LimparStr(str[])
+
+ Limpa uma string.
+ str: Texto/string a ser limpa.
+ Esta função não retorna a valor algum.
+
+
+-   psf_strtokCI(str[], casa_inicial, charseparador[] = " ")
+
+ Identifica um texto (ilimitado, ou seja, até o final do texto enviado) contido após determinada casa inicial. 
+ str: Texto/string a ser lido e ter o valor identificado;
+ casa_inicial: Casa inicial a ser iniciada a identificação;
+ charseparador: Caractere que separa as casas.
+ Retorna: O valor em string identificado após determinada casa.
+
+
+-   psf_strtokCL(str[], casa_inicial, casa_final, charseparador[] = " ")
+
+ Identifica um texto (limitado ou seja, a partir da casa inicial até a casa final) contido após determinada casa inicial. 
+ str: Texto/string a ser lido e ter o valor identificado;
+ casa_inicial: Casa inicial a ser iniciada a identificação;
+ casa_final: Casa final a ser finalizada a identificação;
+ charseparador: Caractere que separa as casas.
+ Retorna: O valor em string identificado entre tais casas.
+
+
+-   psf_strtok(str[], &casa_inicial, charseparador[] = " ")
+ 
+ Identifica um texto a partir de uma casa inicial até a próxima casa (strtok normal).
+ str: Texto/string a ser lido e ter o valor identificado;
+ casa_inicial: Casa inicial a ser iniciada a identificação;
+ charseparador: Caractere que separa as casas.
+ Retorna: O valor em string identificado entre casas (da inicial até a próxima).
+
+
+-   psf_PegarValorEntreCharStr(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar)
+
+ Identifica uma string entre determinados caracteres contidos em uma string.
+ str: String a ser lida;
+ c: Caractere no qual está nas margens do valor desejado (exemplo.: "-valor-" caractere -);
+ vezesbuscarprimeirochar: Vezes que a função buscará a primeira posição do caractere;
+ vezesbuscarsegundochar: Vezes que a função buscará a segunda posição do caractere;
+ Retorna: String do valor entre tais caracteres.
+
+
+-   psf_PegarValorEntreCharFloat(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar)
+
+ Identifica um ponto flutuante (float) entre determinados caracteres contidos em uma string.
+ str: String a ser lida;
+ c: Caractere no qual está nas margens do valor desejado (exemplo.: "-valor-" caractere -);
+ vezesbuscarprimeirochar: Vezes que a função buscará a primeira posição do caractere;
+ vezesbuscarsegundochar: Vezes que a função buscará a segunda posição do caractere;
+ Retorna: Float do valor entre tais caracteres.
+
+
+-   psf_PegarValorEntreCharInt(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar)
+
+ Identifica um valor inteiro (integer) entre determinados caracteres contidos em uma string.
+ str: String a ser lida;
+ c: Caractere no qual está nas margens do valor desejado (exemplo.: "-valor-" caractere -);
+ vezesbuscarprimeirochar: Vezes que a função buscará a primeira posição do caractere;
+ vezesbuscarsegundochar: Vezes que a função buscará a segunda posição do caractere;
+ Retorna: Valor inteiro (integer) entre tais caracteres.
+
+
+-   psf_PegarValorEntreCharBool(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar)
+
+ Identifica um valor booleano (bool) entre determinados caracteres contidos em uma string.
+ str: String a ser lida;
+ c: Caractere no qual está nas margens do valor desejado (exemplo.: "-valor-" caractere -);
+ vezesbuscarprimeirochar: Vezes que a função buscará a primeira posição do caractere;
+ vezesbuscarsegundochar: Vezes que a função buscará a segunda posição do caractere;
+ Retorna: Valor em bool (true ou false) entre tais caracteres.
+
+
+-   psf_PegarValorStr(str[], pos_inicial, pos_final)
+
+ Identifica um valor, em string, entre tais posições de uma string.
+ str: String a ser lida;
+ pos_inicial: Posição inicial a ser iniciada a identificação;
+ pos_final: Posição final a ser finalizada a identificação; 
+ Retorna: Valor em string do valor contido entre tais posições.
+
+
+-   psf_PegarValorFloat(str[], pos_inicial, pos_final)
+
+ Identifica um valor, em ponto flutuante (float), entre tais posições de uma string.
+ str: String a ser lida;
+ pos_inicial: Posição inicial a ser iniciada a identificação;
+ pos_final: Posição final a ser finalizada a identificação; 
+ Retorna: Valor flutuante (float) do valor contido entre tais posições.
+
+
+-   psf_PegarValorInt(str[], pos_inicial, pos_final)
+
+ Identifica um valor, inteiro (integer), entre tais posições de uma string.
+ str: String a ser lida;
+ pos_inicial: Posição inicial a ser iniciada a identificação;
+ pos_final: Posição final a ser finalizada a identificação; 
+ Retorna: Valor inteiro (integer) do valor contido entre tais posições.
+
+
+-   psf_PegarValorBool(str[], pos_inicial, pos_final)
+
+ Identifica um valor, booleano (bool), entre tais posições de uma string.
+ str: String a ser lida;
+ pos_inicial: Posição inicial a ser iniciada a identificação;
+ pos_final: Posição final a ser finalizada a identificação; 
+ Retorna: Valor booleano (bool) do valor contido entre tais posições.
+
+
+-   psf_StrNumerica(str[])
+
+ Verifica se uma string é totalmente numérica (composta apenas por caracteres entre 0 e 9).
+ str: String a ser verificada.
+ Retorna: A 1 se conter apenas numeros e 0 caso contrário.

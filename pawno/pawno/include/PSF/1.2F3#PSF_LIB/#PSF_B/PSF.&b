@@ -1,0 +1,105 @@
+/*
+*
+*	-= PSF BASE =-
+*	Protioso String Funções
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock psf_CopiarStr(str_recebe[], str_origem[]) psf_CSTR_SP(str_recebe, str_origem, strlen(str_origem));
+stock psf_AC(str[], l, c) str[l] = c;
+
+stock psf_CSTR_SP(strr[], strb[], t)
+{
+	new c; psf_CSTR_Z
+	while(c < t)
+	{
+		psf_AC(strr, c, strb[c]);
+		c++;
+	}
+}
+
+stock psf_CopiarStrL(str_recebe[], str_origem[], pos_inicial_origem, pos_final_origem)
+{
+	new c;
+	while(pos_inicial_origem < pos_final_origem) {psf_CSTRL_L;}
+}
+
+stock psf_CharStr(c)
+{
+	new c_s[2];
+	format(c_s, sizeof(c_s), "%c", c);
+	return c_s;
+}
+
+stock psf_FloatStr(Float:f)
+{
+	new f_s[22];
+	format(f_s, sizeof(f_s), "%f", f);
+	return f_s;
+}
+
+stock psf_IntStr(i)
+{
+	new i_s[64];
+	format(i_s, sizeof(i_s), "%d", i);
+	return i_s;
+}
+
+stock psf_CharFiltrado(c[3])
+{
+	new bool:ce;
+	for(new s; s < 8; s++) if(!strcmp(c, FiltroF[s], false, 2)) ce = true;
+	return ce;
+}
+
+stock psf_SubstituirChar(str[], cs[], ct[], bool:ler_case_sensitive = true)
+{
+#pragma tabsize 0
+	new
+		nc[MAX_SUBSTITUIR_CHAR],
+	psf_MSC;
+}
+
+stock psf_ContagemChar(str[], cC[], bool:ler_case_sensitive = true)
+{
+	new
+		nstr[256],
+		achado,
+	 	bool:case_s;
+	if(ler_case_sensitive) case_s = false;
+	else case_s = true;
+	psf_CopiarStr(nstr, str);
+	new busca = strfind(nstr, cC, case_s);
+	while(busca > -1)
+	{
+	    achado++;
+	    strdel(nstr, busca, busca+strlen(cC));
+		strins(nstr, psf_aCP(cC), busca);
+		busca = strfind(nstr, cC, case_s);
+	}
+	return achado;
+}
+	
+stock psf_PosChar(str[], cC[], quantia_procurada, bool:ler_case_sensitive = true)
+{
+	new
+		nstr[256],
+		achado,
+		pos,
+	 	bool:case_s;
+	if(ler_case_sensitive) case_s = false;
+	else case_s = true;
+	psf_CopiarStr(nstr, str);
+	new busca = strfind(nstr, cC, case_s);
+	while(busca > -1 && achado < quantia_procurada)
+	{
+	    achado++;
+		if(achado == quantia_procurada)	pos = busca;
+	    strdel(nstr, busca, busca+strlen(cC));
+		strins(nstr, psf_aCP(cC), busca);
+		busca = strfind(nstr, cC, case_s);
+	}
+	if(achado < quantia_procurada) pos = -1;
+	return pos;
+}

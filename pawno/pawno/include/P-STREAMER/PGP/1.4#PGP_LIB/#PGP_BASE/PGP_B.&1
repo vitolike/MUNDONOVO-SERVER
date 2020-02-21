@@ -1,0 +1,40 @@
+/*
+*
+*	-= PGP BASE =-
+*	Protioso Gerenciamento de Pickups
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+//		Pickup's
+enum pgppdef
+{
+	Float:PGP_X,
+	Float:PGP_Y,
+	Float:PGP_Z,
+	Float:PGP_RaioStream,
+	PGP_VW,
+	PGP_RID,
+	PGP_Modelo,
+ 	PGP_PTIPO,
+	PGP_MSG3D[MAX_PGP3DTEXTLABEL_MSG],
+	Float:PGP_3DEIXOZ,
+	PGP_3DCOR,
+	bool:PGP_S3DL,
+	bool:PGP_SPICKUP[2],
+	bool:PGP_SPICKUPS,
+};
+//      Jogadores
+enum pgpjdef
+{
+    PGP_TOTAL3DV,
+	PlayerText3D:PGP_3DALID[MAX_PGP],
+	bool:PGP_V3DL[MAX_PGP],
+    bool:PGP_PegouPickup,
+	PGP_PickProx,
+    PGP_JogadorPickup,
+};
+new
+	stock
+			PGP_PickupDef[MAX_PGP][pgppdef],
+			PGP_JogadorDef[MAX_PLAYERS][pgpjdef];

@@ -1,0 +1,277 @@
+ Protioso Gerenciamento de Pickups (PGP) 1.4, por [VGS]Protioso_OC
+
+ 
+	Introdução
+
+ PGP veio para lhe facilitar! Com um gerenciamento fácil e ágil, você poderá fazer mais scripts em menos tempo, bem acabados e com diversas 
+formas e alternativas de trabalho. Seu uso é muito simples, e conta com funções diversificadas e ainda permite que você adicione mais
+pickups que o limite padrão, devido ao seu streamer.
+
+
+	"CALLBACKS"
+
+ IMPORTANTE! Para reconhecer algumas ações de jogador/pickup você precisa adicionar os seguintes "callbacks's" (4) no seu script:
+ - Callbacks são funções que o include "chama", porém além de muito úteis e essenciais elas são opcionais. Você usa se achar preciso!
+
+
+  pgp_JogadorEmPickup(playerid, pgpid)
+  {
+      return 1;
+  }  
+
+  pgp_JogadorSaiuPickup(playerid, pgpid)
+  {
+      return 1;
+  }
+
+  pgp_JogadorEntrouEmRaio(playerid, pgpid)
+  {
+      return 1;
+  }
+
+  pgp_JogadorSaiuRaio(playerid, pgpid)
+  {
+      return 1;
+  }
+
+    Descrição
+
+     pgp_JogadorEmPickup(playerid, pgpid): Detecta quando um jogador entra em uma pickup, não importando se ele está a pé ou em um veículo.
+     pgp_JogadorSaiuPickup(playerid, pgpid): Detecta quando um jogador sai de uma pickup, não importando se ele está a pé ou em um veículo.
+     pgp_JogadorEntrouEmRaio(playerid, pgpid): Detecta quando um jogador entra no raio de ativação de uma pickup, não importando se ele está a pé ou em um veículo.
+     pgp_JogadorSaiuRaio(playerid, pgpid): Detecta quando um jogador sai do raio de ativação de uma pickup, não importando se ele está a pé ou em um veículo.
+
+	Exemplo de uso de um callback (pgp_JogadorEmPickup):
+
+		pgp_JogadorEmPickup(playerid, pgpid)
+		{
+			if(pgpid == 1) // checa se a pickup é a de ID 1
+			{
+				SendClientMessage(playerid, cor, "Você está na pickup ID 1 e por isso vai ganhar uma desert eagle com 500 balas!");
+				GivePlayerWeapon(playerid, 24, 500);
+			}
+			return 1;
+		}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Para configurar: include\P-STREAMER\PGP\PGP_CONFIG_GERAL.inc
+	
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	Explicando funções
+
+
+ AVISO: Não se esqueça que as funções abaixo, descritas, só funcionam com as pickups do sistema PGP (criadas pelas funções do include PGP)!
+ * Funções que possuem parâmetro = algum valor (ex.: Float:raio_stream = PGP_RAIO_STREAM_PADRAO), um valor para este parâmetro
+não precisa ser colocado, pois será automaticamente o que está após o sinal de = (igual).
+
+
+>	Funções principais
+
+
+-  pgp_AdicionarPickup(PGP_Modeloid, tipo, Float:x, Float:y, Float:z, virtualworld = 0, Float:raio_stream = PGP_RAIO_STREAM_PADRAO);
+
+ Cria uma PGP pickup normal.
+ PGP_Modeloid: Modelo ID da pickup;
+ tipo: Tipo de pickup*;
+ X: Ponto flutuante X (coordenada);	
+ Y: Ponto flutuante Y (coordenada);	
+ Z: Ponto flutuante Z (coordenada);
+ virtualworld: virtualworld que a pickup será criada;
+ raio_stream: Raio que a pickup será criada quando um jogador se aproximar.
+
+-  pgp_DestruirPickup(pgpid);
+
+ Destrói uma pickup criada pelo sistema PGP.
+ pgpid: ID da pickup criada.
+
+
+-  pgp_RecriarPickup(pgpid);
+
+ Recria uma pickup ('reinicia').
+ pgpid: ID (interno) da pickup a ser desativada.
+
+
+>	Funções pickup/3DTextLabel
+
+
+-  pgp_Anexar3DTextLabel(pgpid, msg[], cormsg, Float:eixoz_pickup = 0.50);
+
+ Anexa um texto do tipo 3DTextLabel em uma pickup.
+ pgpid: ID da pickup criada pelo pgp;
+ msg: Texto a ser criado;
+ cormsg: Cor da mensagem;
+ eixoz_pickup: Altura em ponto flutuante (float) que o texto ficará em relação a pickup.
+
+
+-  pgp_Desanexar3DTextLabel(pgpid);
+
+ Retira um texto do tipo 3DTextLabel que está anexado em uma pickup.
+ pgpid: ID da pickup criada pelo PGP que está com o texto anexado.
+
+
+-  pgp_Atualizar3DTextLabel(pgpid, msg[], cormsg);
+
+ Atualiza as informações do texto anexado.
+ pgpid: ID da pickup que o texto do tipo 3DTextLabel está anexado;
+ msg: Mensagem atualizada do texto;
+ cormsg: Cor atualizada da mensagem do texto.
+ 
+
+-  pgp_Atualizar3DTextLabelTodo(pgpid, msg[], cormsg, Float:eixoz_pickup = 0.50);
+
+ Atualiza ao todo as informações do texto anexado (incluindo o eixoz).
+ pgpid: ID da pickup que o texto do tipo 3DTextLabel está anexado;
+ msg: Mensagem atualizada do texto;
+ cormsg: Cor atualizada da mensagem do texto;
+ eixoz_pickup: Altura atualizada em ponto flutuante (float) do texto referente a pickup.
+
+
+-  pgp_Pegar3DEixoZ(pgpid);
+
+ Retorna a posição de altura do texto do tipo 3DTextLabel que está anexado na pickup.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+-  pgp_Pegar3DCor(pgpid);
+
+ Retorna a cor do texto do tipo 3DTextLabel que está anexado na pickup.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+-  pgp_PegarMSG3D(pgpid);
+
+ Retorna a mensagem do texto do tipo 3DTextLabel que está anexado na pickup.
+ pgpid: ID da pickup criada pelo PGP.
+ 
+ 
+>	Funções que alteram informações da pickup
+
+
+-  pgp_RetirarPickup(pgpid);
+
+ Retira a pickup temporariamente.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+-  pgp_MudarRaioStream(pgpid, Float:novo_raio_stream);
+
+ Muda o raio que a pickup aparece.
+ pgpid: ID da pickup criada pelo PGP;
+ novo_raio_stream: Novo raio em ponto flutuante (float) da pickup.
+
+
+-  pgp_MudarVirtualWorld(pgpid, novo_virtualworld);
+
+ Muda o virtualworld de uma pickup.
+ pgpid: ID da pickup criada pelo PGP;
+ novo_virtualworld: Novo ID do virtualworld que a pickup se encontrará.
+ 
+
+-  pgp_MudarModelo(pgpid, novomodeloid);
+
+ Muda o modelo ID de uma pickup.
+ pgpid: ID da pickup criada pelo PGP;
+ novomodeloid: Novo ID do modelo de pickup desejado.
+
+
+-  pgp_MudarTipo(pgpid, novotipo);
+
+ Muda o tipo* de pickup.
+ pgpid: ID da pickup criada pelo PGP;
+ novotipo: Novo tipo* de pickup;
+
+
+-  pgp_DesativarPickup(pgpid);
+
+ Desativa uma pickup.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+>	Funções que retornam ou servem para pegar algum valor específico (pegar na maioria das vezes é um sinonimo de "retornar" - nas funções abaixo)
+
+
+-  pgp_PickupPGPAtiva(pgpid);
+
+ Checa se uma pickup (PGP) está em funcionamento. Retorna a 1 se a pickup está em funcionamento e a 0 caso não esteja.
+ pgpid: ID da pickup a ser checada.
+ 
+
+-  pgp_JogadorNaPickup(playerid, pgpid);
+
+ Checa se o jogador está na pickup (criada pelo PGP) determinada. Retorna a 1 se o jogador estiver, na pickup, e a 0 se não estiver.
+ playerid: ID do jogador;
+ pgpid: ID da pickup que você quer checar se o jogador está.
+
+
+-  pgp_JogadorEmPickupModelo(playerid, pmodeloid);
+
+ Checa se um jogador está em uma pickup de modelo igual ao definido. Retorna a 1 se o jogador estiver, na pickup de mesmo modelo, e a 0 se não estiver.
+ playerid: ID do jogador;
+ pmodeloid: ID do modelo da pickup.
+
+
+-  pgp_ModeloPickup(pgpid);
+
+ Retorna ao ID do modelo da pickup criada e a 0 se a pickup não existir.
+ pgpid: ID da pickup criada pelo PGP.
+ 
+
+-  pgp_PegarPickupJogador(playerid);
+ 
+ Pega o ID da pickup em que o jogador está posicionado. Retorna o ID da pickup, ou 0 caso o jogador não esteja em uma pickup.
+ playerid: ID do jogador.
+
+
+-  pgp_PegarIDRaio(playerid);
+
+ Pega o ID do raio da pickup em que o jogador está posicionado. Retorna o ID da pickup em que ele está no raio, ou 0 caso o jogador não esteja dentro de um raio.
+ playerid: ID do jogador.
+
+
+-  pgp_PickupExiste(pickup);
+
+ Checa se uma pickup pertence/existe no sistema PGP. Retorna a 1 se a pickup pertence/exsite e a 0 caso não pertença/exista.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+-  pgp_JogadorEstaEmPickup(playerid);
+
+ Checa se um jogador está em uma pickup (PGP).
+ playerid: ID do jogador.
+
+
+-  pgp_PegarPosicaoPickup(pgpid, &Float:x, &Float:y, &Float:z);
+ 
+ Pega as posições X, Y e Z de uma pickup já criada.
+ pgpid: ID da pickup criada pelo PGP;
+ X: Ponto flutuante X (coordenada);	
+ Y: Ponto flutuante Y (coordenada);	
+ Z: Ponto flutuante Z (coordenada).
+
+
+-  pgp_PegarVirtualWorld(pgpid);
+
+ Retorna o ID do virtualworld da pickup.
+ pgpid: ID da pickup criada pelo PGP.
+
+
+-  pgp_PegarRaioStream(pgpid);
+
+ Retorna ao raio que a pickup é criada.
+ pgpid: ID da pickup criada pelo PGP.
+ 
+
+-  pgp_CriarPickupsDoArquivo(arquivo[]);
+
+ Cria pickups que estão dentro de um arquivo.
+   Para serem criadas, o arquivo deve ter uma pickup por linha no formato abaixo:
+    pgp_AdicionarPickup(PGP_Modeloid, tipo, Float:x, Float:y, Float:z, Float:raio_stream, virtualworld = -1);
+    Use exatamente como se fosse no seu script .pwn.
+ arquivo: nome do arquivo (com extensão) que se encontram os checkpoints.
+
+ 
+// Fim
+
+*Para ver os tipos de pickups, abra o arquivo Tipos de pickup.JPEG. Nele há informações à respeito. 

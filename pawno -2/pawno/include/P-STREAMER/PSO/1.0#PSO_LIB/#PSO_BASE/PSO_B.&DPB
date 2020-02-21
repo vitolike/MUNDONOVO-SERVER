@@ -1,0 +1,44 @@
+/*
+*
+*	-= PSO BASE =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+#define PSO_TempoMoverMS(%1,%2) floatround(floatdiv(%1, %2) * 1000)
+
+forward pso_MovendoObjeto(psoid, Float:x, Float:y, Float:z);
+forward pso_ObjetoMovido(psoid);
+forward PSO_AlterarJS(playerid);
+forward PSO_ChecarObjetos();
+
+forward PSO_OnGameModeInit();
+forward PSO_OnFilterScriptInit();
+forward PSO_OnPlayerSpawn(playerid);
+forward PSO_OnPlayerRequestClass(playerid, classid);
+forward PSO_OnPlayerDeath(playerid, killerid, reason);
+forward PSO_OnPlayerRequestSpawn(playerid);
+
+#if !PSO_COMPARTILHAR_FUNC
+	forward pso_SetSpawnInfo(playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3);
+	forward pso_AddPlayerClass(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	forward pso_AddPlayerClassEx(teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	forward pso_SpawnPlayer(playerid);
+	forward pso_SetPlayerPos(playerid, Float:x, Float:y, Float:z);
+	forward pso_SetVehiclePos(vehicleid, Float:x, Float:y, Float:z);
+#endif
+
+#define PSO_ChecarTimer if(!PSO_DefGeral[PSO_Timer]){SetTimer("PSO_ChecarObjetos", PSO_TEMPO_CHECAGEM, 1);PS_AutenticarInclude("PSO");PSO_DefGeral[PSO_Timer] = true;\
+	print("[PSO]: Sistema iniciado, criando objeto(s).");} PSO_DefGeral[PSO_NumObjetos]++
+
+#if PSO_MULTI_SCRIPTS
+	#define PSO_RETIRAR_OBJETO_JOGADOR(%1,%2) if(PSO_Objetos[%2][PSO_M]){StopPlayerObject(%1, PSO_Jogador[%1][PSO_OID][%2]);PSO_Jogador[%1][PSO_Ms][%2] = false;} \
+		DestroyPlayerObject(%1, PSO_Jogador[%1][PSO_OID][%2]);PSO_Jogador[%1][PSO_OID][%2] = 0;PS_JogDefInt(%1, "PSO_TotalObjetos", PS_JogPegarInt(%1, "PSO_TotalObjetos")-1)
+#else
+	#define PSO_RETIRAR_OBJETO_JOGADOR(%1,%2) if(PSO_Objetos[%2][PSO_M]){StopPlayerObject(%1, PSO_Jogador[%1][PSO_OID][%2]);PSO_Jogador[%1][PSO_Ms][%2] = false;} \
+		DestroyPlayerObject(%1, PSO_Jogador[%1][PSO_OID][%2]);PSO_Jogador[%1][PSO_OID][%2] = 0; PSO_Jogador[%1][PSO_TotalObjetos]--
+#endif
+	
+#define PSO_VerificarFunc PSO_OPS = (funcidx("PSO_OnPlayerSpawn") != -1);PSO_ORC = (funcidx("PSO_OnPlayerRequestClass") != -1);\
+	PSO_OPD = (funcidx("PSO_OnPlayerDeath") != -1);PSO_ORS = (funcidx("PSO_OnPlayerRequestSpawn") != -1)

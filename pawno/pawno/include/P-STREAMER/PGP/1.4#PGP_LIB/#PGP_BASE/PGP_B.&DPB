@@ -1,0 +1,28 @@
+/*
+*
+*	-= PGP BASE =-
+*	Protioso Gerenciamento de Pickups
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+//		Variáveis globais
+new
+	#if !PGP_MULTI_SCRIPTS
+		pgp_TotalPick,
+	#endif
+	gNumPGP,
+	bool:pgp_Timer;
+
+//      Essencial
+forward pgp_ChecarPickups();
+forward pgp_JogadorEstaEmPickup(playerid);
+forward pgp_DestruirPickup(pgpid);
+forward pgp_RetirarPickup(pgpid);
+forward PGP_ZerarPickupPega(playerid);
+forward pgp_JogadorEmPickup(playerid, pgpid);
+forward pgp_JogadorSaiuPickup(playerid, pgpid);
+forward pgp_JogadorEntrouEmRaio(playerid, pgpid);
+forward pgp_JogadorSaiuRaio(playerid, pgpid);
+#define pgp_JogadorEntrouRaio PGP_JogadorDef[j][PGP_PickProx] = p; CallLocalFunction("pgp_JogadorEntrouEmRaio", "dd", j, p)
+#define pgp_RecriarPickup pgp_RetirarPickup

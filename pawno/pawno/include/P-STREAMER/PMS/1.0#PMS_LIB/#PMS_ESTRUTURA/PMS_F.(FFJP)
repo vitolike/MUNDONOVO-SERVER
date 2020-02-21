@@ -1,0 +1,200 @@
+/*
+*
+*	-= PMS ESTRUTURA =-
+*	Protioso MapIcon Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pms_ColocarVirtualWorld(pmsid, virtualword)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		PMS_MapIcon[pmsid][PMS_VW] = virtualword;
+		return 1;
+	}
+	return 0;
+}
+
+stock pms_ColocarModelo(pmsid, modeloid)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		PMS_MapIcon[pmsid][PMS_ModeloID] = modeloid;
+		PMS_ALTERAR_MAPICON
+		return 1;
+	}
+	return 0;
+}
+
+
+stock pms_ColocarDistancia(pmsid, Float:distancia)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		PMS_MapIcon[pmsid][PMS_R] = distancia;
+		return 1;
+	}
+	return 0;
+}
+
+stock pms_ColocarCor(pmsid, cor)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		PMS_MapIcon[pmsid][PMS_Cor] = cor;
+		PMS_ALTERAR_MAPICON
+		return 1;
+	}
+	return 0;
+}
+
+stock pms_ColocarCoordenadas(pmsid, Float:x, Float:y, Float:z)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		PMS_MapIcon[pmsid][PMS_X] = x;
+		PMS_MapIcon[pmsid][PMS_Y] = y;
+		PMS_MapIcon[pmsid][PMS_Z] = z;
+		return 1;
+	}
+	return 0;
+}
+
+stock pms_PegarVirtualWorldMapIcon(pmsid) return PMS_MapIcon[pmsid][PMS_VW];
+
+stock pms_PegarCorMapIcon(pmsid) return PMS_MapIcon[pmsid][PMS_Cor];
+
+stock pms_PegarPosMapIcon(pmsid, &Float:x, &Float:y, &Float:z)
+{
+	if(pms_MapIconAtivo(pmsid))
+	{
+		x = PMS_MapIcon[pmsid][PMS_X];
+		y = PMS_MapIcon[pmsid][PMS_Y];
+		z = PMS_MapIcon[pmsid][PMS_Z];
+		return 1;
+	}
+	return 0;
+}
+
+stock Float:pms_PegarRaioMapIcon(pmsid) return PMS_MapIcon[pmsid][PMS_R];
+
+stock pms_PegarModeloMapIcon(pmsid) return (pms_MapIconAtivo(pmsid)) ? PMS_MapIcon[pmsid][PMS_ModeloID] : 0;
+
+stock pms_MapIconAtivo(pmsid) return PMS_MapIcon[pmsid][PMS_S];
+
+stock PMS_SlotDisponivel(playerid)
+{
+	for(new i; i < PMS_VALOR_VISIVEL; i++)
+	{
+		if(!PMS_JMapIcon[playerid][PMS_MIDS][i]) return i;
+	}
+	return 0;
+}
+
+stock PMS_ProcurarEmSlot(playerid, pmsid)
+{
+	for(new i; i < PMS_VALOR_VISIVEL; i++)
+	{
+		if(PMS_JMapIcon[playerid][PMS_MIDS][i] == pmsid) return i;
+	}
+	return 0;
+}
+
+stock pms_RetirarMapIcon(playerid, pmsid)
+{
+	PMS_DS[PMS_PMID] = PMS_ProcurarEmSlot(playerid, pmsid);
+	RemovePlayerMapIcon(playerid, PMS_DS[PMS_PMID]);
+	PMS_JMapIcon[playerid][PMS_MIDS][PMS_DS[PMS_PMID]] = 0;
+	#if PMS_MULTI_SCRIPTS
+		PS_JogDefInt(playerid, "PMS_TMC", PS_JogPegarInt(playerid, "PMS_TMC")-1);
+	#else
+		PMS_JMapIcon[playerid][PMS_TMC]--;
+	#endif
+    PMS_JMapIcon[playerid][PMS_MC][pmsid] = false;
+	return PMS_JMapIcon[playerid][PMS_JC];
+}
+
+stock PMS_ProcurarIDDisponivel()
+{
+	for(new m = 1; m < PMS_MAX_MAPICON; m++)
+	{
+	    if(!pms_MapIconAtivo(m)) return m;
+	}
+	return 0;
+}
+
+stock pms_CriarMapIconsDoArquivo(arquivo[])
+{
+	if(!fexist(arquivo))
+	{
+	    printf("[PMS]: pms_CriarMapIconsDoArquivo(%s) - arquivo nao existe!", arquivo);
+		return 0;
+	}
+	new
+		str[256],
+		File:ArqL,
+		ini,
+		busca,
+		mapicon_vw,
+		mapicon_modelo,
+		mapicon_cor,
+		Float:mapicon_x,
+		Float:mapicon_y,
+		Float:mapicon_z,
+		Float:mapicon_raio,
+		tempvalor[16],
+		TotalMapIconsLidos;
+
+   	ArqL = fopen(arquivo, io_read);
+	while(fread(ArqL, str, sizeof(str), false))
+	{
+		busca = strfind(str, "pms_CriarMapIcon(", true);
+		if(busca != -1)
+		{
+		    ini = busca+strlen("pms_CriarMapIcon(");
+
+			mapicon_x = floatstr(ps_PegarValorStr(str, ini));
+			mapicon_y = floatstr(ps_PegarValorStr(str, ini));
+			mapicon_z = floatstr(ps_PegarValorStr(str, ini));
+			mapicon_modelo = strval(ps_PegarValorStr(str, ini));
+			mapicon_cor = strval(ps_PegarValorStr(str, ini));
+			mapicon_raio = floatstr(ps_PegarValorStr(str, ini));
+			tempvalor = floatstr(ps_PegarValorStr(str, ini));
+			if(strlen(tempvalor)) mapicon_raio = strval(tempvalor);
+			else mapicon_raio = PMS_RAIO_STREAM_PADRAO;
+			tempvalor = ps_PegarValorStr(str, ini);
+			if(strlen(tempvalor)) mapicon_vw = strval(tempvalor);
+			else mapicon_vw = -1;
+
+   			pms_CriarMapIcon(mapicon_x, mapicon_y, mapicon_z, mapicon_modelo, mapicon_cor, mapicon_raio, mapicon_vw);
+		    TotalMapIconsLidos++;
+		}
+		else
+		{
+		    new mapicon_playerid;
+			busca = strfind(str, "pms_CriarMapIconJogador(", true);
+			if(busca != -1)
+			{
+			    ini = busca+strlen("pms_CriarMapIconJogador(");
+			    mapicon_playerid = strval(ps_PegarValorStr(str, ini));
+
+				mapicon_x = floatstr(ps_PegarValorStr(str, ini));
+				mapicon_y = floatstr(ps_PegarValorStr(str, ini));
+				mapicon_z = floatstr(ps_PegarValorStr(str, ini));
+				mapicon_modelo = strval(ps_PegarValorStr(str, ini));
+				mapicon_cor = strval(ps_PegarValorStr(str, ini));
+				tempvalor = floatstr(ps_PegarValorStr(str, ini));
+				if(strlen(tempvalor)) mapicon_raio = strval(tempvalor);
+				else mapicon_raio = PMS_RAIO_STREAM_PADRAO;
+				tempvalor = ps_PegarValorStr(str, ini);
+				if(strlen(tempvalor)) mapicon_vw = strval(tempvalor);
+				else mapicon_vw = -1;
+
+    			pms_CriarMapIconJogador(mapicon_playerid, mapicon_x, mapicon_y, mapicon_z, mapicon_modelo, mapicon_cor, mapicon_raio, mapicon_vw);
+			    TotalMapIconsLidos++;
+			}
+		}
+	}
+	return TotalMapIconsLidos;
+}

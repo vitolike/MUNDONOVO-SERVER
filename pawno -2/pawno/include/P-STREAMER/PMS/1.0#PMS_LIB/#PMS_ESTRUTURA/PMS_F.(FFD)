@@ -1,0 +1,125 @@
+/*
+*
+*	-= PMS ESTRUTURA =-
+*	Protioso MapIcon Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock PMS_AjustarSistema(tipo)
+{
+	if(tipo == 1)
+	{
+	    PMS_DS[PMS_Total]++;
+		if(PMS_DS[PMS_Total] > PMS_VALOR_VISIVEL && !PMS_DS[PMS_SSS]) PMS_DS[PMS_SSS] = true;
+	}
+	else
+	{
+		PMS_DS[PMS_Total]--;
+		if(PMS_DS[PMS_Total] < PMS_VALOR_VISIVEL && PMS_DS[PMS_SSS]) PMS_DS[PMS_SSS] = false;
+	}
+	if(!PMS_DS[PMS_Timer])
+	{
+		SetTimer("pms_ChecarJogadores", 1000, 1);
+		PMS_DS[PMS_Timer] = true;
+		PS_AutenticarInclude("PMS");
+   		print("[PMS]: Sistema iniciado, criando mapicon(s).");
+	}
+}
+
+stock pms_ChecarMapIcons(playerid)
+{
+	if(PMS_DS[PMS_SSS])
+	{
+		if(PMS_JMapIcon[playerid][PMS_MSD])
+	    {
+	    	PMS_JMapIcon[playerid][PMS_MSD] = false;
+			for(new m = 1; m <= PMS_DS[PMS_Total]; m++)
+			{
+				if(PMS_JMapIcon[playerid][PMS_MC][m])
+				{
+                	PMS_JMapIcon[playerid][PMS_MC][m] = false;
+                   	RemovePlayerMapIcon(playerid, m);
+			    }
+        	}
+        }
+		for(new m = 1; m <= PMS_DS[PMS_Total]; m++)
+		{
+			if(pms_MapIconAtivo(m))
+			{
+				if(PMS_MapIcon[m][PMS_VW] != -1)
+			    {
+			        if(GetPlayerVirtualWorld(playerid) != PMS_MapIcon[m][PMS_VW])
+					{
+						if(PMS_JMapIcon[playerid][PMS_MC][m]) pms_RetirarMapIcon(playerid, m);
+						continue;
+					}
+				}
+			    if(PMS_MapIcon[m][PMS_JID] == -1 || PMS_MapIcon[m][PMS_JID] == playerid)
+			    {
+					if(IsPlayerInRangeOfPoint(playerid, PMS_MapIcon[m][PMS_R], PMS_MapIcon[m][PMS_X], PMS_MapIcon[m][PMS_Y], PMS_MapIcon[m][PMS_Z]))
+					{
+					    #if PMS_MULTI_SCRIPTS
+							if(PS_JogPegarInt(playerid, "PMS_TMC") <= PMS_VALOR_VISIVEL	&& !PMS_JMapIcon[playerid][PMS_MC][m])
+						#else
+							if(PMS_JMapIcon[playerid][PMS_TMC] <= PMS_VALOR_VISIVEL	&& !PMS_JMapIcon[playerid][PMS_MC][m])
+						#endif
+				    	{
+	  	    				PMS_DS[PMS_PMID] = PMS_SlotDisponivel(playerid);
+				    		PMS_JMapIcon[playerid][PMS_MIDS][PMS_DS[PMS_PMID]] = m;
+							SetPlayerMapIcon(playerid, PMS_DS[PMS_PMID], PMS_MapIcon[m][PMS_X], PMS_MapIcon[m][PMS_Y], PMS_MapIcon[m][PMS_Z], PMS_MapIcon[m][PMS_ModeloID], PMS_MapIcon[m][PMS_Cor]);
+							#if PMS_MULTI_SCRIPTS
+								PS_JogDefInt(playerid, "PMS_TMC", PS_JogPegarInt(playerid, "PMS_TMC")+1);
+							#else
+								PMS_JMapIcon[playerid][PMS_TMC]++;
+							#endif
+		                    PMS_JMapIcon[playerid][PMS_MC][m] = true;
+						}
+					}
+					else
+					{
+					    #if PMS_MULTI_SCRIPTS
+							if(PMS_JMapIcon[playerid][PMS_MC][m] && PS_JogPegarInt(playerid, "PMS_TMC") > PMS_VALOR_VISIVEL) pms_RetirarMapIcon(playerid, m);
+						#else
+							if(PMS_JMapIcon[playerid][PMS_MC][m] && PMS_JMapIcon[playerid][PMS_TMC] > PMS_VALOR_VISIVEL) pms_RetirarMapIcon(playerid, m);
+						#endif
+				    }
+				}
+				else
+				{
+					if(PMS_JMapIcon[playerid][PMS_MC][m]) pms_RetirarMapIcon(playerid, m);
+                }
+			}
+	    }
+	}
+	else
+	{
+	    if(!PMS_JMapIcon[playerid][PMS_MSD]) PMS_JMapIcon[playerid][PMS_MSD] = true;
+		for(new m = 1; m <= PMS_DS[PMS_Total]; m++)
+		{
+			if(pms_MapIconAtivo(m))
+			{
+				if(PMS_MapIcon[m][PMS_VW] != -1)
+			    {
+			        if(GetPlayerVirtualWorld(playerid) != PMS_MapIcon[m][PMS_VW])
+					{
+						if(PMS_JMapIcon[playerid][PMS_MC][m]) pms_RetirarMapIcon(playerid, m);
+						continue;
+					}
+				}
+			    if(PMS_MapIcon[m][PMS_JID] == -1 || PMS_MapIcon[m][PMS_JID] == playerid)
+			    {
+			        if(!PMS_JMapIcon[playerid][PMS_MC][m])
+			        {
+						SetPlayerMapIcon(playerid, m, PMS_MapIcon[m][PMS_X], PMS_MapIcon[m][PMS_Y], PMS_MapIcon[m][PMS_Z], PMS_MapIcon[m][PMS_ModeloID], PMS_MapIcon[m][PMS_Cor]);
+	    	           	PMS_JMapIcon[playerid][PMS_MC][m] = true;
+					}
+				}
+				else
+				{
+				    if(PMS_JMapIcon[playerid][PMS_MC][m]) PMS_RETIRAR_NORMAL;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,160 @@
+ Protioso MapIcon Streamer (PMS) 1.0, por [VGS]Protioso_OC
+
+ 
+	Introdução
+
+ Para indicar locais e pontos referenciais, no radar, MapIcon's são os que se saem melhor. Não é mesmo? Pelo menos para a maioria sim, e com PMS você
+estará livre para colocar quantos destes ícones quiser! 1000, 2000, 3000... 10000... Você escolhe o limite e PMS cuida do resto!
+ E se você não pretende usar tantos e não ultrapassar o limite por jogador, PMS colocará os ícones de maneira normal, sem streamer. E podemos citar
+também suas demais funções úteis voltadas para alterar e pegar informações de determinado ícone. 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Para configurar: include\P-STREAMER\PMS\PMS_CONFIG_GERAL.inc
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	Explicando funções
+
+
+ AVISO: Não se esqueça que as funções abaixo, descritas, só funcionam com os MapIcons do sistema PMS (criados pelas funções do include PMS)!
+ * Funções que possuem parâmetro = algum valor (ex.: Float:raio_visualizacao = PMS_RAIO_STREAM_PADRAO), um valor para este parâmetro não precisa ser colocado, pois será automaticamente o que está após o sinal de = (igual).
+
+>	Funções principais
+
+
+-  pms_CriarMapIcon(Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao = PMS_RAIO_STREAM_PADRAO, virtualword = -1);
+
+ Cria um MapIcon para todos os jogadores.
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ modeloid: id do modelo do ícone;
+ cor: cor do mapicon;
+ raio_visualizacao: raio que o MapIcon aparecerá para quem se aproximar;
+ virtualworld: id do virtualworld que o MapIcon aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo MapIcon criado.
+
+
+
+-  pms_CriarMapIconJogador(playerid, Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao = PMS_RAIO_STREAM_PADRAO, virtualword = -1);
+
+ Cria um MapIcon para um jogador.
+ playerid: id do jogador;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ modeloid: id do modelo do ícone;
+ cor: cor do mapicon;
+ raio_visualizacao: raio que o MapIcon aparecerá para quem se aproximar;
+ virtualworld: id do virtualworld que o MapIcon aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo MapIcon criado.
+
+
+-  pms_RemoverMapIcon(pmsid);
+
+ Remove determinado MapIcon.
+ pmsid: id do mapicon criado pelo sistema pms.
+
+
+-  pms_ModeloValido(modeloid);
+
+ Verifica se o id modelo de MapIcon é válido.
+ modeloid: id modelo do ícone.
+
+
+>	Funções que colocam/mudam informações do ícone
+
+
+-  pms_ColocarVirtualWorld(pmsid, virtualword);
+
+ Coloca/muda o virtualworld de um MapIcon.
+ pmsid: id do mapicon criado pelo sistema pms;
+ virtualworld: id do virtualworld.
+
+
+-  pms_ColocarModelo(pmsid, modeloid);
+
+ Coloca/muda o modelo id de um MapIcon.
+ pmsid: id do mapicon criado pelo sistema pms;
+ modeloid: id modelo do ícone.
+
+
+-  pms_ColocarDistancia(pmsid, Float:distancia);
+
+ Coloca/muda a distância que o MapIcon aparecerá.
+ pmsid: id do mapicon criado pelo sistema pms;
+ distancia: a distância em ponto flutuante (float).
+
+
+-  pms_ColocarCor(pmsid, cor);
+
+ Coloca/muda a cor de um MapIcon.
+ pmsid: id do mapicon criado pelo sistema pms;
+ cor: cor do ícone.
+
+
+-  pms_ColocarCoordenadas(pmsid, Float:x, Float:y, Float:z);
+
+ Coloca/muda a posição de um MapIcon.
+ pmsid: id do mapicon criado pelo sistema pms;
+ x: coordenada x em ponto flutuante (float);
+ y: coordenada y em ponto flutuante (float);
+ z: coordenada z em ponto flutuante (float).
+
+
+
+>	Funções que retornam ou servem para pegar algum valor específico (pegar na maioria das vezes é um sinonimo de "retornar" - nas funções abaixo)
+
+
+-  pms_PegarVirtualWorldMapIcon(pmsid);
+
+ Pega o id do virtualworld em que o MapIcon está (lembre-se que -1 o MapIcon está em todos).
+ pmsid: id do MapIcon criado pelo sistema pms.
+
+
+-  pms_PegarCorMapIcon(pmsid);
+
+ Pega a cor do MapIcon.
+ pmsid: id do MapIcon criado pelo sistema pms.
+
+
+-  pms_PegarPosMapIcon(pmsid, &Float:x, &Float:y, &Float:z);
+
+ Pega a posição que o MapIcon está.
+ pmsid: id do MapIcon criado pelo sistema pms;
+ x: variável para a coordenada X em ponto flutuante (float);
+ y: variável para a coordenada Y em ponto flutuante (float);
+ z: variável para a coordenada Z em ponto flutuante (float).
+
+
+-  pms_PegarRaioMapIcon(pmsid);
+
+ Pega o raio (em ponto flutuante - float) que o MapIcon aparece.
+ pmsid: id do MapIcon criado pelo sistema pms.
+
+
+-  pms_PegarModeloMapIcon(pmsid);
+
+ Pega o modelo do MapIcon criado.
+ pmsid: id do MapIcon criado pelo sistema pms.
+
+
+-  pms_MapIconAtivo(pmsid);
+
+ Verifica se o MapIcon está ativo/existe.
+ pmsid: id do MapIcon criado pelo sistema pms.
+
+
+-  pms_CriarMapIconsDoArquivo(arquivo[]);
+
+ Cria MapIcons que estão dentro de um arquivo.
+   Para serem criados, o arquivo deve ter um MapIcon por linha no formato abaixo:
+    pms_CriarMapIcon(Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao, virtualword = -1); 
+    ou
+    pms_CriarMapIconJogador(playerid, Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao, virtualword = -1);
+    Use exatamente como se fosse no seu script .pwn.
+ arquivo: nome do arquivo (com extensão) que se encontram os mapicons.
+
+ 
+// Fim

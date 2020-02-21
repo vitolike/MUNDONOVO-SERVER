@@ -1,0 +1,15 @@
+/*
+*
+*	-= PMS BASE =-
+*	Protioso MapIcon Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+forward pms_ChecarJogadores();
+
+#define PMS_CRIANDO_MAPICON PMS_MapIcon[idd][PMS_S] = true; pms_ColocarCor(idd, cor);pms_ColocarModelo(idd, modeloid);pms_ColocarCoordenadas(idd, x, y, z); \
+		pms_ColocarVirtualWorld(idd, virtualword);pms_ColocarDistancia(idd, raio_visualizacao); PMS_AjustarSistema(1)
+		
+#define PMS_ALTERAR_MAPICON	for(new j; j < MAX_PLAYERS; j++){if(PMS_JMapIcon[j][PMS_MC][pmsid]) pms_RetirarMapIcon(j, pmsid);}
+#define PMS_RETIRAR_NORMAL RemovePlayerMapIcon(playerid, m); PMS_JMapIcon[playerid][PMS_MC][m] = false

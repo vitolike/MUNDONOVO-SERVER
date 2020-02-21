@@ -1,0 +1,171 @@
+ Protioso Checkpoint Streamer (PCS) 1.2, por [VGS]Protioso_OC
+
+ 
+	Introdução
+
+ PCS é um include muito funcional, pois você pode inventar diversas maneiras de uso que ele se encaixará na maioria! Possui funções simples e fáceis, que
+podem ser usadas em scripts complexos e ao mesmo tempo scripts muito simples. Com PCS você pode criar quantos checkpoints quiser, sem exigir muito tempo
+ou trabalho.
+
+
+	"CALLBACKS"
+
+ IMPORTANTE! Para reconhecer algumas ações de jogador/checkpoints você precisa adicionar os seguintes "callbacks's" (2) no seu script:
+ - Callbacks são funções que o include "chama", porém além de muito úteis e essenciais elas são opcionais. Você usa se achar preciso!
+
+
+  pcs_JogadorEntrouCheckpoint(playerid, pcsid)
+  {
+      return 1;
+  }  
+
+  pcs_JogadorSaiuCheckpoint(playerid, pcsid)
+  {
+      return 1;
+  }
+
+    Descrição
+
+     pcs_JogadorEntrouCheckpoint(playerid, pcsid): Detecta quando um jogador entra em determinado checkpoint do sistema PCS.
+     pcs_JogadorSaiuCheckpoint(playerid, pcsid): Detecta quando um jogador sai de determinado checkpoint do sistema PCS.
+
+	Exemplo de uso de um callback (pcs_JogadorEntrouCheckpoint):
+
+		pcs_JogadorEntrouCheckpoint(playerid, pcsid)
+		{
+			if(pcsid == 1) // checa se o checkpoint é o de ID 1
+			{
+				SendClientMessage(playerid, cor, "Você está no checkpoint ID 1 e por isso vai ganhar $1000!");
+				GivePlayerMoney(playerid, 1000);
+			}
+			return 1;
+		}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Para configurar: include\P-STREAMER\PCS\PCS_CONFIG_GERAL.inc
+	
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	Explicando funções
+
+
+ AVISO: Não se esqueça que as funções abaixo, descritas, só funcionam com os checkpoints do sistema PCS (criados pelas funções do include PCS)!
+ * Funções que possuem parâmetro = algum valor (ex.: virtualworld = -1), um valor para este parâmetro
+não precisa ser colocado, pois será automaticamente o que está após o sinal de = (igual).
+
+>	Funções principais
+
+
+-  pcs_CriarCheckpoint(Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1);
+
+ Cria um checkpoint para todos os jogadores.
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ tamanho: tamanho do checkpoint em ponto flutuante (float);
+ raio_visualizacao: raio que o checkpoint aparecerá em ponto flutuante (float). Coloque em 0 ou algum número menor para infinito;
+ virtualworld: id do virtualworld que o checkpoint aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo checkpoint criado.
+
+
+-  pcs_CriarJogadorCheckpoint(playerid, Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1);
+
+ Cria um checkpoint para um jogador.
+ playerid: id do jogador;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ tamanho: tamanho do checkpoint em ponto flutuante (float);
+ raio_visualizacao: raio que o checkpoint aparecerá em ponto flutuante (float). Coloque em 0 ou algum número menor para infinito;
+ virtualworld: id do virtualworld que o checkpoint aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo checkpoint criado.
+
+
+-  pcs_AtualizarCheckpoint(pcsid, Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld);
+
+ Atualiza as informações de um checkpoint.
+ pcsid: id do checkpoint;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ tamanho: tamanho do checkpoint em ponto flutuante (float);
+ raio_visualizacao: raio que o checkpoint aparecerá em ponto flutuante (float);
+ virtualworld: id do virtualworld que o checkpoint aparecerá (coloque -1 para aparecer em todos).
+
+
+-  pcs_DesativarCheckpoint(pcsid);
+
+ Desativa/apaga um checkpoint.
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+>	Funções que retornam ou servem para pegar algum valor específico (pegar na maioria das vezes é um sinonimo de "retornar" - nas funções abaixo)
+
+
+-  pcs_PegarPosCheckpoint(pcsid, &Float:x, &Float:y, &Float:z);
+
+ Pega as coordenadas que o checkpoint está.
+ pcsid: id do checkpoint criado pelo sistema pcs;
+ x: variável para a coordenada X em ponto flutuante (float);
+ y: variável para a coordenada Y em ponto flutuante (float);
+ z: variável para a coordenada Z em ponto flutuante (float).
+
+
+-  pcs_PegarVirtualWorldCheckpoint(pcsid);
+
+ Pega o id do virtualworld em que o checkpoint está (lembre-se que -1 o checkpoint está em todos).
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+-  pcs_PegarTamanhoCheckpoint(pcsid);
+
+ Pega o tamanho do checkpoint (em ponto flutuante - float).
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+-  pcs_PegarRaioCheckpoint(pcsid);
+
+ Pega a raio que o checkpoint aparece (em ponto flutuante - float).
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+-  pcs_PegarCheckpointJogador(playerid);
+
+ Pega o id do checkpoint que o jogador está. Retorna a 0 caso não esteja em nenhum.
+ playerid: id do jogador.
+ ° Retorna a 0 se não estiver em nenhum.
+
+
+-  pcs_PegarCheckpointMostrado(playerid);
+
+ Pega o id do checkpoint que está aparecendo para o jogador (ele não vai estar necessariamente no checkpoint).
+ playerid: id do jogador.
+ ° Retorna a 0 se não haver nenhum checkpoint ativado para o jogador.
+
+
+-  pcs_JogadorNoCheckpoint(playerid, cpsid);
+
+ Checa se o jogador está em determinado checkpoint.
+ playerid: id do jogador;
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+-  pcs_CheckpointAtivo(pcsid)
+
+ Checa se um checkpoint está ativo/existe.
+ pcsid: id do checkpoint criado pelo sistema pcs.
+
+
+-  pcs_CriarCheckpointsDoArquivo(arquivo[]);
+
+ Cria checkpoints que estão dentro de um arquivo.
+   Para serem criados, o arquivo deve ter um checkpoint por linha no formato abaixo:
+    pcs_CriarCheckpoint(Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1);
+     ou
+    pcs_CriarJogadorCheckpoint(playerid, Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1);
+    Use exatamente como se fosse no seu script .pwn.
+ arquivo: nome do arquivo (com extensão) que se encontram os checkpoints.
+
+ 
+// Fim

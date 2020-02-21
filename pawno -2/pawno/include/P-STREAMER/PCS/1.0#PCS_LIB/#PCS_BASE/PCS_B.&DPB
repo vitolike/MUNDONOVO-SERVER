@@ -1,0 +1,22 @@
+/*
+*
+*	-= PCS BASE =-
+*	Protioso Checkpoint Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+forward pcs_ChecarCheckpoints();
+forward pcs_JogadorEntrouCheckpoint(playerid, pcsid);
+forward pcs_JogadorSaiuCheckpoint(playerid, pcsid);
+#define PCS_RetirarCheckpointJogador SetPVarInt(j, "PCS_JCP", 0); SetPVarInt(j, "PCS_ProxCP", 0); DisablePlayerCheckpoint(j)
+#define PCS_JogadorEntrandoCheckpoint SetPVarInt(j, "PCS_JCP", c); CallRemoteFunction("pcs_JogadorEntrouCheckpoint", "dd", j, c)
+
+stock PCS_ProcurarIDDisponivel()
+{
+	for(new c = 1; c < MAX_PCS; c++)
+	{
+	    if(!PCS_Checkpoint[c][PCS_SC]) return c;
+	}
+	return 0;
+}

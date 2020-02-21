@@ -1,0 +1,107 @@
+/*
+*
+*	-= PCS ESTRUTURA =-
+*	Protioso Checkpoint Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+static bool:PCS_AUTENTICADO;
+
+stock pcs_PegarPosCheckpoint(pcsid, &Float:x, &Float:y, &Float:z)
+{
+	if(!pcs_CheckpointAtivo(pcsid)) return 0;
+	x = PCS_Checkpoint[pcsid][PCS_X];
+	y = PCS_Checkpoint[pcsid][PCS_Y];
+	z = PCS_Checkpoint[pcsid][PCS_Z];
+	return 1;
+}
+
+stock pcs_PegarVirtualWorldCheckpoint(pcsid) return PCS_Checkpoint[pcsid][PCS_VW];
+stock Float:pcs_PegarTamanhoCheckpoint(pcsid) return PCS_Checkpoint[pcsid][PCS_Tamanho];
+stock Float:pcs_PegarRaioCheckpoint(pcsid) return PCS_Checkpoint[pcsid][PCS_RaioVisualizar];
+stock pcs_PegarCheckpointJogador(playerid) return GetPVarInt(playerid, "PCS_JCP");
+stock pcs_PegarCheckpointMostrado(playerid) return GetPVarInt(playerid, "PCS_ProxCP");
+stock pcs_JogadorNoCheckpoint(playerid, pcsid) return (GetPVarInt(playerid, "PCS_JCP") == pcsid) ? 1 : 0;
+stock pcs_CheckpointAtivo(pcsid) return PCS_Checkpoint[pcsid][PCS_SC];
+
+stock PCS_ChecarTimer()
+{
+    if(!PCS_AUTENTICADO)
+	{
+		PS_AutenticarInclude("PCS");
+		PCS_AUTENTICADO = true;
+	}
+	if(PCS_Total == 1)
+	{
+		SetTimer("pcs_ChecarCheckpoints", PCS_TEMPO_CHECAGEM, 0);
+   		print("[PCS]: Sistema iniciado, criando checkpoint(s).");
+	}
+}
+
+stock pcs_CriarCheckpointsDoArquivo(arquivo[])
+{
+	if(!fexist(arquivo))
+	{
+	    printf("[PCS]: pcs_CriarCheckpointsDoArquivo(%s) - arquivo nao existe!", arquivo);
+		return 0;
+	}
+	new
+		str[256],
+		File:ArqL,
+		ini,
+		busca,
+		cp_vw,
+		Float:cp_x,
+		Float:cp_y,
+		Float:cp_z,
+		Float:cp_tamanho,
+		Float:cp_raio,
+		tempvalor[16],
+		TotalCheckpointsLidos;
+
+   	ArqL = fopen(arquivo, io_read);
+	while(fread(ArqL, str, sizeof(str), false))
+	{
+		busca = strfind(str, "pcs_CriarCheckpoint(", true);
+		if(busca != -1)
+		{
+		    ini = busca+strlen("pcs_CriarCheckpoint(");
+
+			cp_x = floatstr(ps_PegarValorStr(str, ini));
+			cp_y = floatstr(ps_PegarValorStr(str, ini));
+			cp_z = floatstr(ps_PegarValorStr(str, ini));
+			cp_tamanho = floatstr(ps_PegarValorStr(str, ini));
+			cp_raio = floatstr(ps_PegarValorStr(str, ini));
+		    tempvalor = ps_PegarValorStr(str, ini);
+			if(strlen(tempvalor)) cp_vw = strval(tempvalor);
+			else cp_vw = -1;
+
+		    pcs_CriarCheckpoint(cp_x, cp_y, cp_z, cp_tamanho, cp_raio, cp_vw);
+		    TotalCheckpointsLidos++;
+		}
+		else
+		{
+		    new cp_playerid;
+			busca = strfind(str, "pcs_CriarJogadorCheckpoint(", true);
+			if(busca != -1)
+			{
+			    ini = busca+strlen("pcs_CriarJogadorCheckpoint(");
+			    cp_playerid = strval(ps_PegarValorStr(str, ini));
+
+				cp_x = floatstr(ps_PegarValorStr(str, ini));
+				cp_y = floatstr(ps_PegarValorStr(str, ini));
+				cp_z = floatstr(ps_PegarValorStr(str, ini));
+				cp_tamanho = floatstr(ps_PegarValorStr(str, ini));
+				cp_raio = floatstr(ps_PegarValorStr(str, ini));
+				tempvalor = ps_PegarValorStr(str, ini);
+				if(strlen(tempvalor)) cp_vw = strval(tempvalor);
+				else cp_vw = -1;
+
+    			pcs_CriarJogadorCheckpoint(cp_playerid, cp_x, cp_y, cp_z, cp_tamanho, cp_raio, cp_vw);
+			    TotalCheckpointsLidos++;
+			}
+		}
+	}
+	return TotalCheckpointsLidos;
+}

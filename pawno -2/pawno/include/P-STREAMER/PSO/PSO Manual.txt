@@ -1,0 +1,215 @@
+ Protioso Streamer de Objetos (PSO) 1.0, por [VGS]Protioso_OC
+
+ 
+	Introdução
+
+ Seus mapas sempre excederam o limite de objetos padrão? Chega de se preocupar! Com PSO você poderá colocar quantos objetos quiser sem abrir mão de nada.
+Com suas funções diferenciadas PSO se destaca entre os demais includes do gênero. 
+
+
+	"CALLBACKS"
+
+ IMPORTANTE! Para reconhecer quando um objeto acaba de ser movido você precisa adicionar os seguintes "callbacks":
+ - Callbacks são funções que o include "chama", porém além de muito úteis e essenciais elas são opcionais. Você usa se achar preciso!
+
+
+  pso_ObjetoMovido(psoid)
+  {
+      return 1;
+  }  
+
+	Identifica quando um objeto criado pela função pso_CriarObjeto acaba de ser movido.
+	Usado no lugar da função original OnObjectMoved(objectid).
+
+
+  pso_ObjetoJogadorMovido(playerid, psoid)
+  {
+      return 1;
+  } 
+
+	Identifica quando um objeto criado pela função pso_CriarObjetoJogador acaba de ser movido.
+	Usado no lugar da função original OnPlayerObjectMoved(playerid, objectid).
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Para configurar: include\P-STREAMER\PSO\PSO_CONFIG_GERAL.inc
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	Explicando funções
+
+
+ AVISO: Não se esqueça que as funções abaixo, descritas, só funcionam com os objetos do sistema PSO (criados pelas funções do include PSO)!
+ * Funções que possuem parâmetro = algum valor (ex.: Float:raio_stream = PSO_RAIO_STREAM_PADRAO), um valor para este parâmetro
+não precisa ser colocado, pois será automaticamente o que está após o sinal de = (igual).
+
+>	Funções principais
+
+
+
+-  pso_CriarObjeto(modeloid, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, Float:raio_stream = PSO_RAIO_STREAM_PADRAO, virtualword = -1);
+
+ Cria um objeto para todos os jogadores.
+ modeloid: id do modelo do objeto;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ rx: rotação X em ponto flutuante (float);
+ ry: rotação Y em ponto flutuante (float);
+ rz: rotação Z em ponto flutuante (float);
+ raio_stream: raio (em ponto flutuante - float) que o objeto aparecerá;
+ virtualworld: id do virtualworld que o objeto aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo objeto criado.
+
+
+-  pso_CriarObjetoJogador(playerid, modeloid, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, Float:raio_stream = PSO_RAIO_STREAM_PADRAO, virtualword = -1);
+
+ Cria um objeto para um jogador.
+ playerid: id do jogador;
+ modeloid: id do modelo do objeto;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float);
+ rx: rotação X em ponto flutuante (float);
+ ry: rotação Y em ponto flutuante (float);
+ rz: rotação Z em ponto flutuante (float);
+ raio_stream: raio (em ponto flutuante - float) que o objeto aparecerá;
+ virtualworld: id do virtualworld que o objeto aparecerá (deixe -1 para aparecer em todos).
+ ° Retorna ao id do novo objeto criado.
+
+
+-  pso_RemoverObjeto(psoid);
+
+ Remove/destrói um objeto.
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_MoverObjeto(psoid, Float:x, Float:y, Float:z, Float:velocidade);
+
+ Move um objeto.
+ psoid: id do objeto criado pelo sistema pso;
+ x: coordenada X que ele moverá, em ponto flutuante (float);
+ y: coordenada Y que ele moverá, em ponto flutuante (float);
+ z: coordenada Z que ele moverá, em ponto flutuante (float);
+ velocidade: velocidade da movimentação.
+
+
+-  pso_PararMovimentoObjeto(psoid);
+
+ Para de mover um objeto que está em movimento.
+ psoid: id do objeto que está sendo movido.
+
+
+>	Funções que colocam/mudam informações do objeto
+
+
+-  pso_MudarPosObjeto(psoid, Float:x, Float:y, Float:z);
+
+ Muda a posição de um objeto criado.
+ psoid: id do objeto criado pelo sistema pso;
+ x: coordenada X em ponto flutuante (float);
+ y: coordenada Y em ponto flutuante (float);
+ z: coordenada Z em ponto flutuante (float).
+
+
+-  pso_MudarRotObjeto(psoid, Float:rx, Float:ry, Float:rz);
+
+ Muda a rotação de um objeto criado.
+ psoid: id do objeto criado pelo sistema pso;
+ rx: rotação X em ponto flutuante (float);
+ ry: rotação Y em ponto flutuante (float);
+ rz: rotação Z em ponto flutuante (float).
+
+
+-  pso_MudarModeloObjeto(psoid, novo_modeloid);
+
+ Muda o id do modelo do objeto.
+ psoid: id do objeto criado pelo sistema pso;
+ novo_modeloid: novo modelo id.
+
+
+-  pso_MudarVirtualWorldObjeto(psoid, novo_virtualworld);
+
+ Muda o id do virtualworld do objeto.
+ psoid: id do objeto criado pelo sistema pso;
+ novo_virtualworld: novo id do virtualworld.
+
+
+-  pso_MudarRaioStreamObjeto(psoid, Float:novo_raiostream);
+
+ Muda o raio que o objeto aparece.
+ psoid: id do objeto criado pelo sistema pso;
+ novo_raiostream: novo raio.
+
+
+-  pso_MudarJogadorIDObjeto(psoid, novo_playerid);
+
+ Muda o id do jogador que o objeto será criado (referente a função pso_CriarObjetoJogador).
+ psoid: id do objeto criado pelo sistema pso;
+ novo_playerid: novo id do jogador. 
+
+
+>	Funções que retornam ou servem para pegar algum valor específico (pegar na maioria das vezes é um sinonimo de "retornar" - nas funções abaixo)
+
+
+-  pso_PegarPosObjeto(psoid, &Float:x, &Float:y, &Float:z);
+
+ Pega as coordenadas que o objeto está.
+ psoid: id do objeto criado pelo sistema pso;
+ x: variável para a coordenada X em ponto flutuante (float);
+ y: variável para a coordenada Y em ponto flutuante (float);
+ z: variável para a coordenada Z em ponto flutuante (float).
+
+
+-  pso_PegarRotObjeto(psoid, &Float:rx, &Float:ry, &Float:rz);
+
+ Pega as rotações que do objeto criado.
+ psoid: id do objeto criado pelo sistema pso;
+ rx: variável para a rotação X em ponto flutuante (float);
+ ry: variável para a rotação Y em ponto flutuante (float);
+ rz: variável para a rotação Z em ponto flutuante (float).
+
+
+-  pso_PegarModeloObjeto(psoid);
+
+ Pega o id modelo do objeto criado.
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_PegarJogadorIDObjeto(psoid);
+
+ Pega o id do jogador para qual o objeto foi criado (referente a função pso_CriarObjetoJogador).
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_PegarRaioStreamObjeto(psoid);
+
+ Pega o raio que o objeto aparece.
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_PegarVirtualWorldObjeto(psoid);
+
+ Pega o id do virtualworld que o objeto aparece.
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_ObjetoAtivo(psoid);
+
+ Checa se um objeto está ativo/foi criado.
+ psoid: id do objeto criado pelo sistema pso.
+
+
+-  pso_CriarObjetosDoArquivo(arquivo[]);
+
+ Cria objetos que estão dentro de um arquivo.
+   Para serem criados, o arquivo deve ter um objeto por linha no formato abaixo:
+    pso_CriarObjeto(modeloid, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, Float:raio_stream, virtualword = -1);
+    ou
+    pso_CriarObjetoJogador(playerid, modeloid, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, Float:raio_stream, virtualword = -1);
+    Use exatamente como se fosse no seu script .pwn.
+ arquivo: nome do arquivo (com extensão) que se encontram os objetos.
+
+
+// Fim

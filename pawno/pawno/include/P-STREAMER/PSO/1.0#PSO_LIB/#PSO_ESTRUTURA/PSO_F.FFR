@@ -1,0 +1,20 @@
+/*
+*
+*	-= PSO ESTRUTURA =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+#define OnGameModeInit PSO_OnGameModeInit
+#define OnFilterScriptInit PSO_OnFilterScriptInit
+#define OnPlayerSpawn PSO_OnPlayerSpawn
+#define OnPlayerRequestClass PSO_OnPlayerRequestClass
+#define OnPlayerDeath PSO_OnPlayerDeath
+#define OnPlayerRequestSpawn PSO_OnPlayerRequestSpawn
+#define SetSpawnInfo pso_SetSpawnInfo
+#define	SpawnPlayer pso_SpawnPlayer
+#define SetPlayerPos pso_SetPlayerPos
+#define SetVehiclePos pso_SetVehiclePos
+#define AddPlayerClass pso_AddPlayerClass
+#define AddPlayerClassEx pso_AddPlayerClassEx

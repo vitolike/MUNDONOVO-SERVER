@@ -1,0 +1,147 @@
+/*
+*
+*	-= PSF BASE =-
+*	Protioso String Funções
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock psf_ParteExiste(str[], parte[]) return (strfind(str, parte, false) > -1) ? 1 : 0;
+
+stock psf_aCP(str[])
+{
+	new sf[256];
+	psf_CopiarStr(sf, str);
+	for(new c; sf[c]; c++) psf_adT(sf[c]);
+	return sf;
+}
+
+stock psf_LimparStr(str[])
+{
+	new t[2];
+	t[0] = strlen(str);
+	while(t[1] < t[0])
+	{
+	    str[t[1]] = 0;
+		t[1]++;
+	}
+}
+
+stock psf_setchar(&c, c2) c = c2;
+
+stock psf_InverterStr(str[256])
+{
+	new
+		t[2],
+		tstr[2],
+	    strf[256];
+	t[0] = strlen(str);
+	while(t[1] != t[0])
+	{
+		t[1]++,	tstr[0] = str[t[0]-t[1]],
+		strins(strf, tstr, strlen(strf));
+	}
+	return strf;
+}
+
+stock psf_strtokCI(str[], casa_inicial, charseparador[] = " ")
+{
+	if(casa_inicial == -1) casa_inicial = 1;
+	new
+		pe,
+		temp_str[MAX_psf_strtokCI];
+	pe = psf_PosChar(str, charseparador, casa_inicial);
+	if(pe > 0 && pe-1 >= 0) pe+=1;
+	else if(pe == -1) pe = strlen(str);
+	psf_CopiarStrL(temp_str, str, pe, strlen(str));
+	return temp_str;
+}
+
+stock psf_strtokCL(str[], casa_inicial, casa_final, charseparador[] = " ")
+{
+	new
+		temp_str[MAX_psf_strtokCL],
+	    contagem = psf_ContagemChar(str, charseparador),
+		casas[2];
+	casas[0] = casa_inicial,
+	casas[1] = casa_final;
+	if(casas[0] > 0)
+	{
+		casas[0] = psf_PosChar(str, charseparador, casa_inicial);
+	    if(casas[0]-1 >= 0) casas[0]+=1;
+	}
+	if(casa_final <= contagem) casas[1] = psf_PosChar(str, charseparador, casa_final);
+	else casas[1] = strlen(str);
+	psf_CopiarStrL(temp_str, str, casas[0], casas[1]);
+	return temp_str;
+}
+
+stock psf_strtok(str[], &casa_inicial, charseparador[] = " ")
+{
+	new temp_str[MAX_psf_strtok];
+	new	posi[2];
+	posi[0] = casa_inicial;
+	if(posi[0] > 0)
+	{
+		posi[0] = psf_PosChar(str, charseparador, casa_inicial);
+	    if(posi[0]-1 >= 0) posi[0]+=1;
+	}
+    posi[1] = psf_PosChar(str, charseparador, casa_inicial+1);
+    if(posi[1] == -1) posi[1] = strlen(str);
+	psf_CopiarStrL(temp_str, str, posi[0], posi[1]);
+	casa_inicial++;
+	return temp_str;
+}
+
+stock psf_PegarValorEntreCharStr(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar)
+{
+	new
+		posc[2],
+		temp_str[256];
+
+	if(vezesbuscarprimeirochar > 0) posc[0] = psf_PosChar(str, c, vezesbuscarprimeirochar);
+	if(vezesbuscarsegundochar > 0) posc[1] = psf_PosChar(str, c, vezesbuscarsegundochar);
+	psf_CopiarStr(temp_str, str);
+	if(posc[0] > 0)
+	{
+		if(posc[0]-1 >= 0) posc[0]+=1;
+		strdel(temp_str, 0, posc[0]);
+	    posc[1] -= posc[0];
+	}
+	if(posc[1] < strlen(temp_str)) strdel(temp_str, posc[1], strlen(temp_str));
+	return temp_str;
+}
+
+stock Float:psf_PegarValorEntreCharFloat(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar) return floatstr(psf_PegarValorEntreCharStr(str, c, vezesbuscarprimeirochar, vezesbuscarsegundochar));
+stock psf_PegarValorEntreCharInt(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar) return strval(psf_PegarValorEntreCharStr(str, c, vezesbuscarprimeirochar, vezesbuscarsegundochar));
+stock psf_PegarValorEntreCharBool(str[], c[MAX_psf_char_separador], vezesbuscarprimeirochar, vezesbuscarsegundochar) return (strval(psf_PegarValorEntreCharStr(str, c, vezesbuscarprimeirochar, vezesbuscarsegundochar)) > 0) ? true : false;
+
+
+stock psf_PegarValorStr(str[], pos_inicial, pos_final)
+{
+	new temp_str[256];
+	psf_CopiarStr(temp_str, str);
+	if(pos_inicial > 0)
+	{
+		if(pos_inicial-1 > 0) pos_inicial+=1;
+		strdel(temp_str, 0, pos_inicial);
+	    pos_final -= pos_inicial;
+	}
+	if(pos_final < strlen(temp_str)) strdel(temp_str, pos_final, strlen(temp_str));
+	return temp_str;
+}
+
+stock Float:psf_PegarValorFloat(str[], pos_inicial, pos_final) return floatstr(psf_PegarValorStr(str, pos_inicial, pos_final));
+stock psf_PegarValorInt(str[], pos_inicial, pos_final) return strval(psf_PegarValorStr(str, pos_inicial, pos_final));
+stock psf_PegarValorBool(str[], pos_inicial, pos_final) return (strval(psf_PegarValorStr(str, pos_inicial, pos_final)) > 0) ? true : false;
+
+stock psf_StrNumerica(str[])
+{
+	new t = strlen(str);
+	if(!t) return 0;
+	else
+	{
+	    for(new c; c < t; c++) if(!psf_nCA(str[c])) return 0;
+		return 1;
+	}
+}

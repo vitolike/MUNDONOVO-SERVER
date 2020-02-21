@@ -1,0 +1,111 @@
+/*
+*
+*	-= PGP ESTRUTURA =-
+*	Protioso Gerenciamento de Pickups
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+public PGP_ZerarPickupPega(playerid) if(PGP_JogadorDef[playerid][PGP_PegouPickup]) PGP_JogadorDef[playerid][PGP_PegouPickup] = false;
+stock pgp_PegarPickupJogador(playerid) return PGP_JogadorDef[playerid][PGP_JogadorPickup];
+stock pgp_PegarIDRaio(playerid) return PGP_JogadorDef[playerid][PGP_PickProx];
+stock pgp_PickupExiste(pgpid) return (!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) ? 0 : 1;
+stock pgp_JogadorEstaEmPickup(playerid) return (!pgp_PegarPickupJogador(playerid)) ? 0 : 1;
+
+stock pgp_SaindoPickup(playerid, pgpid)
+{
+	PGP_JogadorDef[playerid][PGP_JogadorPickup] = 0;
+	PGP_JogadorDef[playerid][PGP_PegouPickup] = false;
+	CallLocalFunction("pgp_JogadorSaiuPickup", "dd", playerid, pgpid);
+}
+
+stock pgp_SaindoProxPickup(playerid, pgpid, bool:rf = true)
+{
+	PGP_JogadorDef[playerid][PGP_PegouPickup] = false;
+ 	PGP_JogadorDef[playerid][PGP_JogadorPickup] = 0;
+	PGP_JogadorDef[playerid][PGP_PickProx] = 0;
+	if(rf) CallLocalFunction("pgp_JogadorSaiuRaio", "dd", playerid, pgpid);
+}
+
+stock pgp_JogadorPegouPickup(playerid, pgpid)
+{
+	PGP_JogadorDef[playerid][PGP_PegouPickup] = true;
+	CallLocalFunction("pgp_JogadorEmPickup", "dd", playerid, pgpid);
+	#if PGP_TEMPO_PEGAR_PICKUP != -1
+	SetTimerEx("PGP_ZerarPickupPega", PGP_TEMPO_PEGAR_PICKUP, 0, "d", playerid);
+	#endif
+}
+
+stock pgp_PegarPosicaoPickup(pgpid, &Float:x, &Float:y, &Float:z)
+{
+	if(!pgp_PickupExiste(pgpid)) return 0;
+	else
+	{
+    	x = PGP_PickupDef[pgpid][PGP_X];
+    	y = PGP_PickupDef[pgpid][PGP_Y];
+    	z = PGP_PickupDef[pgpid][PGP_Z];
+    	return 1;
+	}
+}
+
+stock pgp_PegarVirtualWorld(pgpid) return  (!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) ? -1 : PGP_PickupDef[pgpid][PGP_VW];
+
+stock Float:pgp_Pegar3DEixoZ(pgpid) return PGP_PickupDef[pgpid][PGP_3DEIXOZ];
+
+stock pgp_Pegar3DCor(pgpid) return PGP_PickupDef[pgpid][PGP_3DCOR];
+
+stock pgp_PegarMSG3D(pgpid)
+{
+	new 3dmsg[MAX_PGP3DTEXTLABEL_MSG];
+	psf_CopiarStr(3dmsg, PGP_PickupDef[pgpid][PGP_MSG3D]);
+	return 3dmsg;
+}
+
+stock Float:pgp_PegarRaioStream(pgpid) return PGP_PickupDef[pgpid][PGP_RaioStream];
+
+stock pgp_CriarPickupsDoArquivo(arquivo[])
+{
+	if(!fexist(arquivo))
+	{
+	    printf("[PGP]: pgp_CriarPickupsDoArquivo(%s) - arquivo nao existe!", arquivo);
+		return 0;
+	}
+	new
+		str[256],
+		File:ArqL,
+		ini,
+		busca,
+		pickup_vw,
+		pickup_modelo,
+		pickup_tipo,
+		Float:pickup_x,
+		Float:pickup_y,
+		Float:pickup_z,
+		Float:pickup_raio,
+		tempvalor[16],
+		TotalPickupsLidas;
+
+   	ArqL = fopen(arquivo, io_read);
+	while(fread(ArqL, str, sizeof(str), false))
+	{
+		busca = strfind(str, "pgp_AdicionarPickup(", true);
+		if(busca != -1)
+		{
+		    ini = busca+strlen("pgp_AdicionarPickup(");
+			pickup_modelo = strval(ps_PegarValorStr(str, ini));
+			pickup_tipo = strval(ps_PegarValorStr(str, ini));
+			pickup_x = floatstr(ps_PegarValorStr(str, ini));
+			pickup_y = floatstr(ps_PegarValorStr(str, ini));
+			pickup_z = floatstr(ps_PegarValorStr(str, ini));
+			tempvalor = floatstr(ps_PegarValorStr(str, ini));
+			if(strlen(tempvalor)) pickup_raio = strval(tempvalor);
+			else pickup_raio = PGP_RAIO_STREAM_PADRAO;
+		    tempvalor = ps_PegarValorStr(str, ini);
+			if(strlen(tempvalor)) pickup_vw = strval(tempvalor);
+			else pickup_vw = 0;
+   			pgp_AdicionarPickup(pickup_modelo, pickup_tipo, pickup_x, pickup_y, pickup_z, pickup_vw, pickup_raio);
+		    TotalPickupsLidas++;
+		}
+	}
+	return TotalPickupsLidas;
+}

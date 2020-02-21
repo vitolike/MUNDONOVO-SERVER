@@ -1,0 +1,45 @@
+/*
+*
+*	-= PMS BASE =-
+*	Protioso MapIcon Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+enum PMS_IDI
+{
+	PMS_VW,
+	PMS_Cor,
+	PMS_JID,
+	bool:PMS_S,
+	Float:PMS_X,
+	Float:PMS_Y,
+	Float:PMS_Z,
+	Float:PMS_R,
+	PMS_ModeloID,
+};
+
+enum PMS_IDE
+{
+	PMS_PMID,
+	PMS_Total,
+	bool:PMS_SSS,
+	bool:PMS_Timer,
+};
+
+enum PMS_IDJ
+{
+	#if !PMS_MULTI_SCRIPTS
+		PMS_TMC,
+	#endif
+	bool:PMS_JC,
+	bool:PMS_MSD,
+	PMS_MIDS[PMS_VALOR_VISIVEL],
+	bool:PMS_MC[PMS_MAX_MAPICON],
+};
+
+new
+	stock
+			PMS_DS[PMS_IDE],
+			PMS_JMapIcon[MAX_PLAYERS][PMS_IDJ],
+			PMS_MapIcon[PMS_MAX_MAPICON][PMS_IDI];

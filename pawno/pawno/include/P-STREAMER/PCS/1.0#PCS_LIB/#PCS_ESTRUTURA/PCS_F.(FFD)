@@ -1,0 +1,50 @@
+/*
+*
+*	-= PCS ESTRUTURA =-
+*	Protioso Checkpoint Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock Float:PCS_PegarRaioJogador(playerid, pcsid)
+{
+	new
+	    Float:dx2,
+	    Float:dy2,
+	    Float:dz2;
+
+	GetPlayerPos(playerid, dx2, dy2, dz2);
+	return floatsqroot(floatpower(floatabs(floatsub(dx2, PCS_Checkpoint[pcsid][PCS_X])), 2) + floatpower(floatabs(floatsub(dy2, PCS_Checkpoint[pcsid][PCS_Y])), 2) + floatpower(floatabs(floatsub(dz2, PCS_Checkpoint[pcsid][PCS_Z])), 2));
+}
+
+stock pcs_PegarProxCP(playerid)
+{
+	new
+	    cpsid,
+		Float:proxcp,
+		Float:proxcpant;
+	for(new c = 1; c < PCS_Total+1; c++)
+	{
+	    if(pcs_CheckpointAtivo(c))
+	    {
+	    	if(PCS_Checkpoint[c][PCS_VW] != -1)
+	    	{
+	    	    if(PCS_Checkpoint[c][PCS_VW] != GetPlayerVirtualWorld(playerid)) continue;
+	    	}
+	        if(PCS_Checkpoint[c][PCS_IDJCP] == -1 || PCS_Checkpoint[c][PCS_IDJCP] == playerid)
+	        {
+		    	proxcp = PCS_PegarRaioJogador(playerid, c);
+		    	if(c != 1)
+				{
+			        if(proxcp < proxcpant && proxcp <= PCS_Checkpoint[c][PCS_RaioVisualizar]) cpsid = c;
+				}
+				else
+				{
+				    if(proxcp <= PCS_Checkpoint[c][PCS_RaioVisualizar]) cpsid = c;
+				}
+				proxcpant = proxcp;
+			}
+		}
+	}
+	return cpsid;
+}

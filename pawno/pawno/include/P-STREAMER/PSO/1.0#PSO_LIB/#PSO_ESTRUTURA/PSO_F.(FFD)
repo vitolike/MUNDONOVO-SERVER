@@ -1,0 +1,384 @@
+/*
+*
+*	-= PSO ESTRUTURA =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+static
+		bool:PSO_OPS,
+		bool:PSO_ORC,
+		bool:PSO_OPD,
+		bool:PSO_ORS;
+
+stock PSO_JogadorEmRaioObjeto(playerid, psoid)
+{
+    new Float:psojpos[3];
+	GetPlayerPos(playerid, psojpos[0], psojpos[1], psojpos[2]);
+	return PSO_EmRaio(psojpos[0], psojpos[1], psojpos[2], PSO_Objetos[psoid][PSO_Pos][0], PSO_Objetos[psoid][PSO_Pos][1], PSO_Objetos[psoid][PSO_Pos][2], PSO_Objetos[psoid][PMS_RaioStream]);
+}
+
+stock PSO_EmRaio(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:raio)
+{
+	new Float:rpos[3];
+	rpos[0] = (x1 - x2),
+	rpos[1] = (y1 - y2),
+	rpos[2] = (z1 - z2);
+	return (((rpos[0] < raio) && (rpos[0] > -raio)) && ((rpos[1] < raio) && (rpos[1] > -raio)) && ((rpos[2] < raio) && (rpos[2] > -raio))) ? 1 : 0;
+}
+
+stock pso_RetirarObjetosJogador(playerid)
+{
+	if(!ps_IsPlayerConnected(playerid)) return 0;
+	for(new o = 1; o < PSO_DefGeral[PSO_NumObjetos]+1; o++)
+	{
+	    if(PSO_Objetos[o][PSO_S])
+	    {
+	        if(PSO_Jogador[playerid][PSO_OID][o] != 0)
+			{
+				PSO_RETIRAR_OBJETO_JOGADOR(playerid, o);
+			}
+		}
+	}
+	return 1;
+}
+
+public pso_MovendoObjeto(psoid, Float:x, Float:y, Float:z)
+{
+	if(!PSO_Objetos[psoid][PSO_S] || !PSO_Objetos[psoid][PSO_M]) return 0;
+	if(x < PSO_Objetos[psoid][PSO_Pos][0])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][0] - PSO_Objetos[psoid][PSO_M] < x) PSO_MudarPos(psoid, 0, x);
+	    else PSO_MudarPos(psoid, 0, PSO_Objetos[psoid][PSO_Pos][0] - PSO_Objetos[psoid][PSO_M]);
+	}
+	else if(x > PSO_Objetos[psoid][PSO_Pos][0])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][0] + PSO_Objetos[psoid][PSO_M] > x) PSO_MudarPos(psoid, 0, x);
+	    else PSO_MudarPos(psoid, 0, PSO_Objetos[psoid][PSO_Pos][0] + PSO_Objetos[psoid][PSO_M]);
+	}
+	if(y < PSO_Objetos[psoid][PSO_Pos][1])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][1] - PSO_Objetos[psoid][PSO_M] < y) PSO_MudarPos(psoid, 1, y);
+	    else PSO_MudarPos(psoid, 1, PSO_Objetos[psoid][PSO_Pos][1] - PSO_Objetos[psoid][PSO_M]);
+	}
+	else if(y > PSO_Objetos[psoid][PSO_Pos][1])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][1] + PSO_Objetos[psoid][PSO_M] > y) PSO_MudarPos(psoid, 1, y);
+	    else PSO_MudarPos(psoid, 1, PSO_Objetos[psoid][PSO_Pos][1] + PSO_Objetos[psoid][PSO_M]);
+	}
+	if(z < PSO_Objetos[psoid][PSO_Pos][2])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][2] - PSO_Objetos[psoid][PSO_M] < z) PSO_MudarPos(psoid, 2, z);
+	    else PSO_MudarPos(psoid, 2, PSO_Objetos[psoid][PSO_Pos][2] - PSO_Objetos[psoid][PSO_M]);
+	}
+	else if(z > PSO_Objetos[psoid][PSO_Pos][2])
+	{
+	    if(PSO_Objetos[psoid][PSO_Pos][2] + PSO_Objetos[psoid][PSO_M] > z) PSO_MudarPos(psoid, 2, z);
+	    else  PSO_MudarPos(psoid, 2, PSO_Objetos[psoid][PSO_Pos][2] + PSO_Objetos[psoid][PSO_M]);
+	}
+	if(PSO_Objetos[psoid][PSO_Pos][0] == x && PSO_Objetos[psoid][PSO_Pos][1] == y && PSO_Objetos[psoid][PSO_Pos][2] == z)
+	{
+	    PSO_Objetos[psoid][PSO_M] = 0.0;
+	    PSO_Objetos[psoid][PSO_TimerM] = 0;
+	    for(new j; j < MAX_PLAYERS; j++) if(PSO_Jogador[j][PSO_Ms][psoid]) PSO_Jogador[j][PSO_Ms][psoid] = false;
+		if(PSO_Objetos[psoid][PSO_JID] != -1) CallLocalFunction("pso_ObjetoMovido", "d", psoid);
+		else CallLocalFunction("pso_ObjetoJogadorMovido", "dd", PSO_Objetos[psoid][PSO_JID], psoid);
+	}
+	else PSO_Objetos[psoid][PSO_TimerM] = SetTimerEx("pso_MovendoObjeto", 1000, 0, "dfff", psoid, x, y, z);
+	return 1;
+}
+
+stock PSO_ProcurarIDDisponivel()
+{
+	for(new o = 1; o < MAX_PSO; o++) if(!PSO_Objetos[o][PSO_S]) return o;
+	return 0;
+}
+
+stock pso_ColocarObjetosJogador(playerid, Float:x, Float:y, Float:z)
+{
+	new
+	    objetosc,
+		jvw = GetPlayerVirtualWorld(playerid);
+	for(new o = 1; o < PSO_DefGeral[PSO_NumObjetos]+1; o++)
+	{
+	    if(PSO_Objetos[o][PSO_S])
+	    {
+	    	if(PSO_EmRaio(x, y, z, PSO_Objetos[o][PSO_Pos][0], PSO_Objetos[o][PSO_Pos][1], PSO_Objetos[o][PSO_Pos][2], PSO_Objetos[o][PMS_RaioStream]))
+	    	{
+				if(PSO_Objetos[o][PSO_VW] == -1 || jvw == PSO_Objetos[o][PSO_VW])
+				{
+					if(PSO_Objetos[o][PSO_VW] != -1)
+					{
+						if(GetPlayerVirtualWorld(playerid) != PSO_Objetos[o][PSO_VW])
+						{
+							if(PSO_Jogador[playerid][PSO_OID][o] != 0)
+							{
+								PSO_RETIRAR_OBJETO_JOGADOR(playerid, o);
+							}
+							continue;
+						}
+					}
+				    #if PSO_MULTI_SCRIPTS
+						if(PS_JogPegarInt(playerid, "PSO_TotalObjetos") < MAX_OBJETOS_JOGADOR && !PSO_Jogador[playerid][PSO_OID][o])
+					#else
+						if(PSO_Jogador[playerid][PSO_TotalObjetos] < MAX_OBJETOS_JOGADOR && !PSO_Jogador[playerid][PSO_OID][o])
+					#endif
+					{
+						PSO_Jogador[playerid][PSO_OID][o] = CreatePlayerObject(playerid, PSO_Objetos[o][PSO_ModeloID], PSO_Objetos[o][PSO_Pos][0], PSO_Objetos[o][PSO_Pos][1], PSO_Objetos[o][PSO_Pos][2],
+						PSO_Objetos[o][PSO_Pos][3], PSO_Objetos[o][PSO_Pos][4], PSO_Objetos[o][PSO_Pos][5]);
+						#if PSO_MULTI_SCRIPTS
+							PS_JogDefInt(playerid, "PSO_TotalObjetos", PS_JogPegarInt(playerid, "PSO_TotalObjetos")+1);
+						#else
+						    PSO_Jogador[playerid][PSO_TotalObjetos]++;
+						#endif
+						objetosc++;
+					}
+					if(PSO_Objetos[o][PSO_M])
+					{
+					    if(!PSO_Jogador[playerid][PSO_Ms][o])
+					    {
+						    MovePlayerObject(playerid, PSO_Jogador[playerid][PSO_OID][o], PSO_Objetos[o][PSO_Pos][6], PSO_Objetos[o][PSO_Pos][7], PSO_Objetos[o][PSO_Pos][8], PSO_Objetos[o][PSO_M]);
+							PSO_Jogador[playerid][PSO_Ms][o] = true;
+						}
+					}
+				}
+				else
+				{
+					if(PSO_Jogador[playerid][PSO_OID][o] != 0)
+					{
+						PSO_RETIRAR_OBJETO_JOGADOR(playerid, o);
+					}
+				}
+			}
+			else
+			{
+				#if PSO_CONSERVAR_OBJETOS
+				    #if PSO_MULTI_SCRIPTS
+			    		if(PSO_Jogador[playerid][PSO_OID][o] != 0 && PS_JogPegarInt(playerid, "PSO_TotalObjetos") == MAX_OBJETOS_JOGADOR
+						&& PSO_DefGeral[PSO_NumObjetos] > MAX_OBJETOS_JOGADOR)
+					#else
+			    		if(PSO_Jogador[playerid][PSO_OID][o] != 0 && PSO_Jogador[playerid][PSO_TotalObjetos] == MAX_OBJETOS_JOGADOR
+						&& PSO_DefGeral[PSO_NumObjetos] > MAX_OBJETOS_JOGADOR)
+					#endif
+			    #else
+			    	if(PSO_Jogador[playerid][PSO_OID][o] != 0 && PSO_DefGeral[PSO_NumObjetos] > MAX_OBJETOS_JOGADOR)
+			    #endif
+				{
+					PSO_RETIRAR_OBJETO_JOGADOR(playerid, o);
+				}
+			}
+		}
+	}
+	return objetosc;
+}
+
+public PSO_AlterarJS(playerid)
+{
+	PSO_Jogador[playerid][PSO_JS] = false;
+	PSO_Jogador[playerid][PSO_TimerSPP] = 0;
+}
+
+#if PSO_MULTI_SCRIPTS
+	#define pso_ListarCPOS(%1,%2,%3,%4) PS_DefIntInfoEs("PSO_Classes_0", %1, %2);PS_DefIntInfoEs("PSO_Classes_1", %1, %3);PS_DefIntInfoEs("PSO_Classes_2", %1, %4)
+#else
+	#define pso_ListarCPOS(%1,%2,%3,%4) PSO_Classes[%1][0] = %2;PSO_Classes[%1][1] = %3;PSO_Classes[%1][2] = %4
+#endif
+
+stock pso_SpawnJogador(playerid, PSO_SpawnTipo:tipo = PreVisualizar)
+{
+	if(tipo == PreVisualizar)
+	{
+		PSO_Jogador[playerid][PSO_JS] = true;
+		pso_ColocarObjetosJogador(playerid, PSO_Jogador[playerid][PSO_SPos][0], PSO_Jogador[playerid][PSO_SPos][1], PSO_Jogador[playerid][PSO_SPos][2]);
+	}
+	else PSO_Jogador[playerid][PSO_JS] = false;
+}
+
+#if !PSO_COMPARTILHAR_FUNC
+	public pso_SetSpawnInfo(playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3)
+	{
+		PSO_Jogador[playerid][PSO_SPos][0] = x;
+		PSO_Jogador[playerid][PSO_SPos][1] = y;
+		PSO_Jogador[playerid][PSO_SPos][2] = z;
+		return SetSpawnInfo(playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3);
+	}
+
+	public pso_AddPlayerClass(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo)
+	{
+		new psonc =	AddPlayerClass(modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+		pso_ListarCPOS(psonc, spawn_x, spawn_y, spawn_z);
+		return psonc;
+	}
+
+	public pso_AddPlayerClassEx(teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo)
+	{
+		new psonc =	AddPlayerClassEx(teamid, modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+		pso_ListarCPOS(psonc, spawn_x, spawn_y, spawn_z);
+		return psonc;
+	}
+
+	public pso_SpawnPlayer(playerid)
+	{
+		pso_SpawnJogador(playerid);
+	    return SpawnPlayer(playerid);
+	}
+
+	public pso_SetPlayerPos(playerid, Float:x, Float:y, Float:z)
+	{
+		if(!ps_IsPlayerConnected(playerid)) return 0;
+		if(PSO_Jogador[playerid][PSO_JS])
+		{
+			if(pso_ColocarObjetosJogador(playerid, x, y, z) > 0) SetPlayerPos(playerid, x, y, z+0.3);
+			else SetPlayerPos(playerid, x, y, z);
+		}
+		else
+		{
+		    if(PSO_Jogador[playerid][PSO_TimerSPP])	KillTimer(PSO_Jogador[playerid][PSO_TimerSPP]);
+			PSO_Jogador[playerid][PSO_JS] = true;
+			if(pso_ColocarObjetosJogador(playerid, x, y, z) > 0)
+			{
+				SetPlayerPos(playerid, x, y, z+0.3);
+				PSO_Jogador[playerid][PSO_TimerSPP] = SetTimerEx("PSO_AlterarJS", 3000, 0, "d", playerid);
+			}
+			else
+			{
+				SetPlayerPos(playerid, x, y, z);
+				pso_SpawnJogador(playerid, SpawnFinal);
+			}
+		}
+		return 1;
+	}
+
+
+	public pso_SetVehiclePos(vehicleid, Float:x, Float:y, Float:z)
+	{
+		if(!GetVehicleModel(vehicleid)) return 0;
+		new playerid = -1;
+		for(new j; j < GetMaxPlayers(); j++)
+		{
+		    if(GetPlayerVehicleID(j) == vehicleid) playerid = j;
+		}
+		if(playerid > -1)
+		{
+		    if(PSO_Jogador[playerid][PSO_TimerSPP])	KillTimer(PSO_Jogador[playerid][PSO_TimerSPP]);
+			PSO_Jogador[playerid][PSO_JS] = true;
+			if(pso_ColocarObjetosJogador(playerid, x, y, z) > 0)
+			{
+				SetVehiclePos(vehicleid, x, y, z+0.3);
+				SetTimerEx("PSO_AlterarJS", 3000, 0, "d", playerid);
+			}
+			else
+			{
+				SetVehiclePos(vehicleid, x, y, z);
+				pso_SpawnJogador(playerid, SpawnFinal);
+			}
+		}
+		else SetVehiclePos(vehicleid, x, y, z);
+		return 1;
+	}
+	
+#else
+
+	static bool:PSO_SCA;
+	
+	stock PSO_ChecarCompartilhamento()
+	{
+	    if(!PSO_SCA)
+	    {
+			PSO_SCA = bool:PS_IncludeAutenticado("PSO");
+			if(!PSO_SCA) print("[PSO]: Sistema primario inexistente ou definido apos o uso da funcao, impossivel compartilhar funcoes!");
+			else print("[PSO]: Sistema primario detectado, compartilhamento de funcoes permitido!");
+		}
+		return PSO_SCA;
+	}
+
+	stock pso_SetSpawnInfo(playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_SetSpawnInfo", "dddffffdddddd", playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3);
+	    else return SetSpawnInfo(playerid, time, skin, Float:x, Float:y, Float:z, Float:ang, arma1, municao1, arma2, municao2, arma3, municao3);
+	}
+
+	stock pso_AddPlayerClass(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_AddPlayerClass", "dffffdddddd", modelid, spawn_x, spawn_y, spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	    else return AddPlayerClass(modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	}
+
+	stock pso_AddPlayerClassEx(teamid, modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_AddPlayerClass", "ddffffdddddd", teamid, modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	    else return AddPlayerClassEx(teamid, modelid, spawn_x, spawn_y, spawn_z, z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+	}
+
+	stock pso_SpawnPlayer(playerid)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_SpawnPlayer", "d", playerid);
+	    else return SpawnPlayer(playerid);
+	}
+
+	stock pso_SetPlayerPos(playerid, Float:x, Float:y, Float:z)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_SetPlayerPos", "dfff", playerid, x, y, z);
+	    else return SetPlayerPos(playerid, x, y, z);
+	}
+
+	stock pso_SetVehiclePos(vehicleid, Float:x, Float:y, Float:z)
+	{
+	    if(PSO_ChecarCompartilhamento()) return CallRemoteFunction("pso_SetVehiclePos", "dfff", vehicleid, x, y, z);
+	    else return SetVehiclePos(vehicleid, x, y, z);
+	}
+
+#endif
+
+
+public OnFilterScriptInit()
+{
+    if(funcidx("PSO_OnFilterScriptInit") != -1) CallLocalFunction("PSO_OnFilterScriptInit", "");
+	PSO_VerificarFunc;
+}
+
+public OnGameModeInit()
+{
+    if(funcidx("PSO_OnGameModeInit") != -1) CallLocalFunction("PSO_OnGameModeInit", "");
+	PSO_VerificarFunc;
+}
+
+public OnPlayerSpawn(playerid)
+{
+    pso_SpawnJogador(playerid, SpawnFinal);
+    if(PSO_OPS) CallLocalFunction("PSO_OnPlayerSpawn", "d", playerid);
+    return 1;
+}
+
+public OnPlayerRequestClass(playerid, classid)
+{
+	#if PSO_MULTI_SCRIPTS
+		PSO_Jogador[playerid][PSO_SPos][0] = PS_PegarFloatInfoEs("PSO_Classes_0", classid);
+		PSO_Jogador[playerid][PSO_SPos][1] = PS_PegarFloatInfoEs("PSO_Classes_1", classid);
+		PSO_Jogador[playerid][PSO_SPos][2] = PS_PegarFloatInfoEs("PSO_Classes_2", classid);
+	#else
+		PSO_Jogador[playerid][PSO_SPos][0] = PSO_Classes[classid][0];
+		PSO_Jogador[playerid][PSO_SPos][1] = PSO_Classes[classid][1];
+		PSO_Jogador[playerid][PSO_SPos][2] = PSO_Classes[classid][2];
+	#endif
+	pso_SpawnJogador(playerid, PreVisualizar);
+    if(PSO_ORC) return CallLocalFunction("PSO_OnPlayerRequestClass", "dd", playerid, classid);
+    return 1;
+}
+
+public OnPlayerDeath(playerid, killerid, reason)
+{
+	pso_SpawnJogador(playerid, PreVisualizar);
+    if(PSO_OPD) return CallLocalFunction("PSO_OnPlayerDeath", "ddd", playerid, killerid, reason);
+    return 1;
+}
+
+public OnPlayerRequestSpawn(playerid)
+{
+	pso_SpawnJogador(playerid, PreVisualizar);
+    if(PSO_ORS) return CallLocalFunction("PSO_OnPlayerRequestSpawn", "d", playerid);
+    return 1;
+}
+
+#include "P-STREAMER\P-gFUNC\P-STREAMER_gFUNC_FINAL"

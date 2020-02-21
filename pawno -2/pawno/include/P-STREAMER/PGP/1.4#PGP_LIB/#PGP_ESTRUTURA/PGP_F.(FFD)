@@ -1,0 +1,134 @@
+/*
+*
+*	-= PGP ESTRUTURA =-
+*	Protioso Gerenciamento de Pickups
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+static bool:PGP_AUTENTICADO;
+
+public pgp_RetirarPickup(pgpid)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0] || !PGP_PickupDef[pgpid][PGP_SPICKUPS]) return 0;
+	DestroyPickup(PGP_PickupDef[pgpid][PGP_RID]);
+	if(PGP_PickupDef[pgpid][PGP_S3DL]) pgp_Retirar3DTextLabelTodos;
+	PGP_PickupDef[pgpid][PGP_SPICKUPS] = false;
+	#if PGP_MULTI_SCRIPTS
+    	setproperty(0, "pgp_TotalPick", getproperty(0, "pgp_TotalPick")-1);
+    #else
+  	  pgp_TotalPick--;
+    #endif
+	return 1;
+}
+
+stock pgp_CriarPickup(pgpid)
+{
+	#if PGP_MULTI_SCRIPTS
+		if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0] || PGP_PickupDef[pgpid][PGP_SPICKUPS] || getproperty(0, "pgp_TotalPick")+1 > MAX_PICKUPS) return 0;
+    #else
+		if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0] || PGP_PickupDef[pgpid][PGP_SPICKUPS] || pgp_TotalPick+1 > MAX_PICKUPS) return 0;
+    #endif
+    PGP_PickupDef[pgpid][PGP_RID] =
+	CreatePickup(PGP_PickupDef[pgpid][PGP_Modelo], PGP_PickupDef[pgpid][PGP_PTIPO],
+	PGP_PickupDef[pgpid][PGP_X], PGP_PickupDef[pgpid][PGP_Y], PGP_PickupDef[pgpid][PGP_Z], PGP_PickupDef[pgpid][PGP_VW]);
+	PGP_PickupDef[pgpid][PGP_SPICKUPS] = true;
+	#if PGP_MULTI_SCRIPTS
+	    setproperty(0, "pgp_TotalPick", getproperty(0, "pgp_TotalPick")+1);
+	#else
+	    pgp_TotalPick++;
+    #endif
+	return 1;
+}
+
+stock pgp_MudarRaioStream(pgpid, Float:novo_raio_stream)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+	PGP_PickupDef[pgpid][PGP_RaioStream] = novo_raio_stream;
+	if(PGP_PickupDef[pgpid][PGP_S3DL]) pgp_Retirar3DTextLabelTodos;
+	pgp_RetirarPickup(pgpid);
+	return 1;
+}
+
+stock pgp_MudarVirtualWorld(pgpid, novo_virtualworld)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+	PGP_PickupDef[pgpid][PGP_VW] = novo_virtualworld;
+	if(PGP_PickupDef[pgpid][PGP_S3DL]) pgp_Retirar3DTextLabelTodos;
+	pgp_RetirarPickup(pgpid);
+	return 1;
+}
+
+stock pgp_MudarModelo(pgpid, novomodeloid)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+	PGP_PickupDef[pgpid][PGP_Modelo] = novomodeloid;
+	pgp_RetirarPickup(pgpid);
+	return 1;
+}
+
+stock pgp_MudarTipo(pgpid, novotipo)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+	PGP_PickupDef[pgpid][PGP_PTIPO] = novotipo;
+	pgp_RetirarPickup(pgpid);
+	return 1;
+}
+
+stock pgp_DesativarPickup(pgpid)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+    gNumPGP--;
+    if(!gNumPGP) pgp_Timer = false;
+	pgp_RetirarPickup(pgpid);
+	PGP_PickupDef[pgpid][PGP_SPICKUP][0] = false;
+	PGP_PickupDef[pgpid][PGP_S3DL] = false;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+		if(PGP_JogadorDef[j][PGP_PickProx] == pgpid) pgp_Retirar3DTextLabel(j, pgpid);
+		if(PGP_JogadorDef[j][PGP_JogadorPickup] == pgpid)
+		{
+			PGP_JogadorDef[j][PGP_PegouPickup] = false;
+		 	PGP_JogadorDef[j][PGP_JogadorPickup] = 0;
+			PGP_JogadorDef[j][PGP_PickProx] = 0;
+		}
+	}
+	return 1;
+}
+
+stock PGP_ChecarTimer()
+{
+	if(!PGP_AUTENTICADO)
+	{
+		PS_AutenticarInclude("PGP");
+		PGP_AUTENTICADO = true;
+	}
+	if(!pgp_Timer)
+	{
+        pgp_Timer = true;
+		SetTimer("pgp_ChecarPickups", PGP_TEMPO_CHECAGEM, 0);
+   		print("[PGP]: Sistema iniciado, criando pickup(s).");
+	}
+}
+
+stock pgp_PickupPGPAtiva(pgpid)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][1]) return 0;
+	return 1;
+}
+
+#define pgp_JogadorPegaPickup pgp_RetirarPickup
+
+stock pgp_JogadorNaPickup(playerid, pgpid)
+{
+	if(!PGP_PickupDef[pgpid][PGP_SPICKUP][0]) return 0;
+	return (pgp_PegarPickupJogador(playerid) == pgpid) ? 1 : 0;
+}
+
+stock pgp_JogadorEmPickupModelo(playerid, PGP_Modeloid)
+{
+	if(pgp_PegarPickupJogador(playerid) > 0 && PGP_PickupDef[pgp_PegarPickupJogador(playerid)][PGP_Modelo] == PGP_Modeloid) return 1;
+	return 0;
+}
+
+stock pgp_ModeloPickup(pgpid) return (pgp_PickupExiste(pgpid) == 1) ? PGP_PickupDef[pgpid][PGP_Modelo] : 0;

@@ -1,0 +1,25 @@
+/*
+*
+*	-= PCS BASE =-
+*	Protioso Checkpoint Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+// Checkpoint's
+enum PCS_CDEF
+{
+	Float:PCS_X,
+	Float:PCS_Y,
+	Float:PCS_Z,
+	bool:PCS_SC,
+	Float:PCS_Tamanho,
+	Float:PCS_RaioVisualizar,
+	PCS_IDJCP,
+	PCS_VW,
+};
+
+new
+	stock
+			PCS_Total,
+			PCS_Checkpoint[MAX_PCS][PCS_CDEF];

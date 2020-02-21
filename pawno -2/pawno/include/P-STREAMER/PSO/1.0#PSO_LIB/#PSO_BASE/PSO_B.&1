@@ -1,0 +1,52 @@
+/*
+*
+*	-= PSO BASE =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+enum PSO_SpawnTipo
+{
+	PreVisualizar,
+	SpawnFinal,
+}
+
+enum PSO_odef
+{
+	PSO_VW,
+	PSO_JID,
+	bool:PSO_S,
+	PSO_TimerM,
+	Float:PSO_M,
+	PSO_ModeloID,
+	Float:PSO_Pos[9],
+	Float:PMS_RaioStream,
+};
+
+enum PSO_jdef
+{
+    bool:PSO_JS,
+    PSO_OID[MAX_PSO],
+    #if !PSO_MULTI_SCRIPTS
+        PSO_TotalObjetos,
+	#endif
+	PSO_TimerSPP,
+    bool:PSO_Ms[MAX_PSO],
+    Float:PSO_SPos[3],
+};
+
+enum PSO_defg
+{
+	bool:PSO_Timer,
+	PSO_NumObjetos,
+};
+
+new
+	stock
+			PSO_DefGeral[PSO_defg],
+    		#if !PSO_MULTI_SCRIPTS
+				Float:PSO_Classes[300][3],
+			#endif
+			PSO_Objetos[MAX_PSO][PSO_odef],
+			PSO_Jogador[MAX_PLAYERS][PSO_jdef];

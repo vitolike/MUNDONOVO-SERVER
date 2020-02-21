@@ -1,0 +1,59 @@
+/*
+*
+*	-= PSF BASE =-
+*	Protioso String Funções
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+#define TAXA_BAIXA 7
+#define TAXA_MEDIANA 13
+#define TAXA_ALTA 19
+#define TAXA_MAXIMA 25
+
+#define MAX_PCOD_CHAR_FINAL 50
+
+#define _PCOD_COMPACTAR_FINAL; \
+		 {new PCOD_STR[MAX_PCOD_CHAR_FINAL]; strcat(PCOD_STR, psf_FormatarStr(str, psf_fT(taxa))); return PCOD_STR;}
+
+#define psf_CSTR_Z psf_AC(strr, t, 0);
+
+#define psf_CSTRL_L \
+		str_recebe[c] = str_origem[pos_inicial_origem], pos_inicial_origem++, c++
+
+#define psf_MSC bool:case_s;\
+		if(ler_case_sensitive) case_s = false; else case_s = true; psf_CopiarStr(nc, str); \
+		new busca = strfind(nc, cs, false);	while(busca > -1) {strdel(nc, busca, busca+strlen(cs)),	strins(nc, ct, busca), busca = strfind(nc, cs, case_s);}\
+		return nc
+
+new
+	sapMi[][] =
+	{
+		{"n"}, {"o"}, {"p"}, {"q"}, {"s"}, {"t"}, {"u"}, {"v"}, {"w"}, {"x"}, {"y"}, {"z"}
+	},
+	sapMa[][] =
+	{
+		{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"F"}, {"G"}, {"H"}, {"I"}, {"J"}, {"K"}, {"L"},
+		{"M"}, {"N"}
+	},
+	FiltroF[][] =
+	{
+		{"(1"}, {"(2"}, {"(3"}, {"(4"}, {"(5"}, {"(6"},
+		{")1"}, {")2"}
+	},
+	FiltroB[][] =
+	{
+		{"|"}, {":"}, {"/"}, {"\\"}, {"?"}, {"*"},
+		{">"}, {"<"}
+	},
+	TfN[][] =
+	{
+		{"â"}, {"ã"}, {"á"}, {"ú"}, {"ó"},
+		{"é"}, {"ê"}, {"í"}, {"ç"}, {"ô"}
+	},
+	TfF[][] =
+	{
+		{"™"}, {"š"}, {"˜"}, {"“"}, {"¦"},
+		{"ž"}, {"Ÿ"}, {"¢"}, {"œ"}, {"§"}
+	};
+	

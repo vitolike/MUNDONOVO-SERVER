@@ -1,0 +1,23 @@
+	TIPOS DE PICKUPS ("pickup spawn type" - retirado de http://wiki.sa-mp.com/wiki/PickupTypes)
+
+ID - DESCRIÇÃO
+
+1 - Não pode ser pega e existe o tempo todo.
+2 - Pode ser pega, reaparece após algum tempo.
+3 - Pode ser pega, reaparece após ser pega.
+4 - Desaparece pouco tempo depois de criada.
+5 - Desaparece pouco tempo depois de criada.
+8 - Pode ser pega, mas não tem efeito. Desaparece automaticamente.
+11 - Explode alguns segundos após ter sido criada.
+12 - Explode alguns segundos após ter sido criada.
+13 - Desce lentamente à terra.
+14 - Pode ser pega, mas apenas se estiver em um veículo. Cai através de objetos criados através do script.
+15 - Pode ser pega e feito isto reaparecerá.
+19 - Pode ser pega, mas não tem efeito.
+22 - Pode ser pega e feito isto reaparecerá.
+23 - Pode ser pega, mas não desaparece.
+
+
+
+
+... pgp_AdicionarPickup(PGP_Modeloid, tipo, Float:x, Float:y, Float:z, virtualworld = 0, Float:raio_stream = PGP_RAIO_STREAM_PADRAO);

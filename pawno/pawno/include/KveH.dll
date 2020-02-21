@@ -1,0 +1,207 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                                                       *
+*                                                                       *
+*	        ******* Include - KveH *******                       		*
+*                                                                       *
+*	         Ken's 0.3c Vehicle Include Functions  (KveH)               *
+*                                                                       *
+*	            Autor: rjjj ou [iPs]Ken.	                            *
+*	            Créditos á audifan00 á tudo relacionado á Neons.        *
+*				Agradecimentos: [iPs] Team. 		                    *
+*                                                                       *
+*                                                                       *
+*                                                                       *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+#include "a_samp.inc"
+
+#if defined _KveH_included
+	#endinput
+#endif
+#define _KveH_included
+
+
+#define StatusON ((1))
+#define StatusOFF ((0))
+#define Neon_Azul ((5))
+#define Neon_Vermelho ((6))
+#define Neon_Verde ((7))
+#define Neon_Branco ((8))
+#define Neon_Rosa ((9))
+#define Neon_Amarelo ((10))
+
+
+new VehiclePlateData[MAX_VEHICLES][30];
+new bool:DefinedPlaca[MAX_VEHICLES];
+new VehicleNeon[MAX_VEHICLES];
+new VeiculoNeonCor[MAX_VEHICLES];
+
+/*
+Funções:
+
+
+native SetVehiclePlate(vehicleid, textplate[]);
+native GetVehiclePlate(vehicleid);
+native SetVehicleLock(vehicleid, bool:status);
+native SetVehicleEngine(vehicleid, bool:status);
+native SetVehicleLigths(vehicleid, bool:status);
+native SetVehicleCapo(vehicleid, bool:status);
+native SetVehiclePortaMala(vehicleid, bool:status);
+native SetVehicleNeon(vehicleid, cor, bool:status);
+native GetVehicleLock(vehicleid);
+native GetVehicleEngine(vehicleid);
+native GetVehicleLigths(vehicleid);
+native GetVehicleCapo(vehicleid);
+native GetVehiclePortaMala(vehicleid);
+native GetVehicleNeonColor(vehicleid);
+*/
+
+
+stock SetVehiclePlate(vehicleid, textplate[]){
+    strmid(VehiclePlateData[vehicleid],textplate,false,strlen(textplate),sizeof(VehiclePlateData[vehicleid]));
+	SetVehicleNumberPlate(vehicleid,textplate);
+	new Float:VeiculoX, Float:VeiculoY, Float:VeiculoZ;
+ 	GetVehiclePos(vehicleid, VeiculoX, VeiculoY, VeiculoZ);
+ 	SetVehiclePos(vehicleid, VeiculoX, VeiculoY, VeiculoZ);
+	DefinedPlaca[vehicleid] = true;
+	return 1;
+}
+stock GetVehiclePlate(vehicleid){
+	const Padrao[10] = "XYZR 000";
+	if(DefinedPlaca[vehicleid]) return VehiclePlateData[vehicleid];
+	return Padrao;
+}
+stock SetVehicleLock(vehicleid, bool:status){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	SetVehicleParamsEx(vehicleid, maquina, luzes, alarme, status, capota, portamala, objective);
+	return 1;
+}
+stock SetVehicleEngine(vehicleid, bool:status){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	SetVehicleParamsEx(vehicleid, status, luzes, alarme, portas, capota, portamala, objective);
+	return 1;
+}
+stock SetVehicleLigths(vehicleid, bool:status){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	SetVehicleParamsEx(vehicleid, maquina, status, alarme, status, capota, portamala, objective);
+	return 1;
+}
+stock SetVehicleCapo(vehicleid, bool:status){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	SetVehicleParamsEx(vehicleid, maquina, luzes, alarme, status, status, portamala, objective);
+	return 1;
+}
+stock SetVehiclePortaMala(vehicleid, bool:status){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	SetVehicleParamsEx(vehicleid, maquina, luzes, alarme, status, capota, status, objective);
+	return 1;
+}
+
+stock GetVehicleLock(vehicleid){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	return portas;
+}
+
+stock GetVehicleEngine(vehicleid){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	return maquina;
+}
+stock GetVehicleLigths(vehicleid){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	return luzes;
+}
+stock GetVehicleCapo(vehicleid){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	return capota;
+}
+stock GetVehiclePortaMala(vehicleid){
+	new maquina, luzes, alarme, portas, capota, portamala, objective;
+	GetVehicleParamsEx(vehicleid, maquina, luzes, alarme, portas, capota, portamala, objective);
+	return portamala;
+}
+
+stock SetVehicleNeon(vehicleid, cor, bool:status){
+	if(!status) return ResetVehicleNeon(vehicleid);
+	if(cor == Neon_Azul)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Azul;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18648,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	else if(cor == Neon_Vermelho)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Vermelho;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18647,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	else if(cor == Neon_Verde)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Verde;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18649,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	else if(cor ==  Neon_Branco)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Branco;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18652,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	else if(cor == Neon_Rosa)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Rosa;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18651,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	else if(cor == Neon_Amarelo)
+	{
+	    VeiculoNeonCor[vehicleid] = Neon_Amarelo;
+	    DestroyObject(VehicleNeon[vehicleid]);
+	    VehicleNeon[vehicleid] = CreateObject(18650,0,0,0,0,0,0);
+ 		AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, -0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	 	AttachObjectToVehicle(VehicleNeon[vehicleid], vehicleid, 0.8, 0.0, -0.70, 0.0, 0.0, 0.0);
+	}
+	return 1;
+}
+
+stock GetVehicleNeonColor(vehicleid){
+	const SemNeon[2] = "nenhuma";
+	const Azul_Neon[2] = "azul";
+	const Vermelho_Neon[2] = "vermelho";
+	const Verde_Neon[2] = "verde";
+	const Branco_Neon[2] = "branco";
+	const Rosa_Neon[2] = "rosa";
+	const Amarelo_Neon[2] = "amarelo";
+	if(VeiculoNeonCor[vehicleid] == Neon_Azul) return Azul_Neon;
+	else if(VeiculoNeonCor[vehicleid] == Neon_Vermelho) return Vermelho_Neon;
+	else if(VeiculoNeonCor[vehicleid] == Neon_Verde) return Verde_Neon;
+	else if(VeiculoNeonCor[vehicleid] == Neon_Branco) return Branco_Neon;
+	else if(VeiculoNeonCor[vehicleid] == Neon_Rosa) return Rosa_Neon;
+	else if(VeiculoNeonCor[vehicleid] == Neon_Amarelo) return Amarelo_Neon;
+	return SemNeon;
+}
+
+stock ResetVehicleNeon(vehicleid){
+    DestroyObject(VehicleNeon[vehicleid]);
+	VeiculoNeonCor[vehicleid] = 0;
+	return 1;
+}

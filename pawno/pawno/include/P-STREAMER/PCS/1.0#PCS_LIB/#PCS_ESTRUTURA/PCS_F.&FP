@@ -1,0 +1,60 @@
+/*
+*
+*	-= PCS ESTRUTURA =-
+*	Protioso Checkpoint Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pcs_CriarCheckpoint(Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1)
+{
+	new idd = PCS_ProcurarIDDisponivel();
+	if(!idd)
+	{
+		print("[PCS]: Limite de Checkpoints excedido!");
+		return 0;
+	}
+	PCS_Total++;
+	PCS_ChecarTimer();
+	PCS_Checkpoint[idd][PCS_SC] = true;
+	PCS_Checkpoint[idd][PCS_IDJCP] = -1;
+	pcs_AtualizarCheckpoint(idd, x, y, z, tamanho, raio_visualizacao, virtualworld);
+	return idd;
+}
+
+stock pcs_CriarJogadorCheckpoint(playerid, Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld = -1)
+{
+	new idd = PCS_ProcurarIDDisponivel();
+	if(!idd)
+	{
+		print("[PCS]: Limite de Checkpoints excedido!");
+		return 0;
+	}
+	PCS_Total++;
+	PCS_ChecarTimer();
+	PCS_Checkpoint[idd][PCS_SC] = true;
+	PCS_Checkpoint[idd][PCS_IDJCP] = playerid;
+	pcs_AtualizarCheckpoint(idd, x, y, z, tamanho, raio_visualizacao, virtualworld);
+	return idd;
+}
+
+stock pcs_DesativarCheckpoint(pcsid)
+{
+	if(!pcs_CheckpointAtivo(pcsid)) return 0;
+	PCS_Checkpoint[pcsid][PCS_SC] = false;
+	PCS_Total--;
+	return 1;
+}
+
+stock pcs_AtualizarCheckpoint(pcsid, Float:x, Float:y, Float:z, Float:tamanho, Float:raio_visualizacao, virtualworld)
+{
+	if(!pcs_CheckpointAtivo(pcsid)) return 0;
+	PCS_Checkpoint[pcsid][PCS_X] = x;
+	PCS_Checkpoint[pcsid][PCS_Y] = y;
+	PCS_Checkpoint[pcsid][PCS_Z] = z;
+	PCS_Checkpoint[pcsid][PCS_VW] = virtualworld;
+	PCS_Checkpoint[pcsid][PCS_Tamanho] = tamanho;
+	if(raio_visualizacao < 1) PCS_Checkpoint[pcsid][PCS_RaioVisualizar] = Float:0x7F800000;
+	else PCS_Checkpoint[pcsid][PCS_RaioVisualizar] = raio_visualizacao;
+	return 1;
+}

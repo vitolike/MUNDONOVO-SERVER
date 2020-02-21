@@ -1,0 +1,148 @@
+/*
+*
+*	-= PSO ESTRUTURA =-
+*	Protioso Streamer de Objetos
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pso_CriarObjeto(modeloid, Float:x, Float:y, Float:z, Float:__rx, Float:_ry, Float:_rz, Float:raio_stream = PSO_RAIO_STREAM_PADRAO, virtualword = -1)
+{
+	new oid = PSO_ProcurarIDDisponivel();
+	if(!oid)
+	{
+	    printf("[PSO]: Limite de objetos (MAX_PSO %d) excedido!", MAX_PSO);
+	    return 0;
+	}
+	PSO_Objetos[oid][PSO_VW] = virtualword;
+	PSO_Objetos[oid][PSO_JID] = -1;
+	PSO_Objetos[oid][PSO_S] = true;
+	PSO_Objetos[oid][PSO_Pos][0] = x;
+	PSO_Objetos[oid][PSO_Pos][1] = y;
+	PSO_Objetos[oid][PSO_Pos][2] = z;
+	PSO_Objetos[oid][PSO_Pos][3] = __rx;
+	PSO_Objetos[oid][PSO_Pos][4] = _ry;
+	PSO_Objetos[oid][PSO_Pos][5] = _rz;
+	PSO_Objetos[oid][PMS_RaioStream] = raio_stream;
+	PSO_Objetos[oid][PSO_ModeloID] = modeloid;
+	PSO_ChecarTimer;
+	return oid;
+}
+
+stock pso_CriarObjetoJogador(playerid, modeloid, Float:x, Float:y, Float:z, Float:__rx, Float:_ry, Float:_rz, Float:raio_stream = PSO_RAIO_STREAM_PADRAO, virtualword = -1)
+{
+	new oid = PSO_ProcurarIDDisponivel();
+	if(!oid)
+	{
+	    printf("[PSO]: Limite de objetos (MAX_PSO %d) excedido!", MAX_PSO);
+	    return 0;
+	}
+	PSO_Objetos[oid][PSO_VW] = virtualword;
+	PSO_Objetos[oid][PSO_JID] = playerid;
+	PSO_Objetos[oid][PSO_S] = true;
+	PSO_Objetos[oid][PSO_Pos][0] = x;
+	PSO_Objetos[oid][PSO_Pos][1] = y;
+	PSO_Objetos[oid][PSO_Pos][2] = z;
+	PSO_Objetos[oid][PSO_Pos][3] = __rx;
+	PSO_Objetos[oid][PSO_Pos][4] = _ry;
+	PSO_Objetos[oid][PSO_Pos][5] = _rz;
+	PSO_Objetos[oid][PMS_RaioStream] = raio_stream;
+	PSO_Objetos[oid][PSO_ModeloID] = modeloid;
+	PSO_ChecarTimer;
+	return oid;
+}
+
+stock pso_RemoverObjeto(psoid)
+{
+	if(!PSO_Objetos[psoid][PSO_S]) return 0;
+	PSO_Objetos[psoid][PSO_S] = false;
+	PSO_DefGeral[PSO_NumObjetos]--;
+	for(new j; j < MAX_PLAYERS; j++)
+	{
+	    if(ps_IsPlayerConnected(j))
+	    {
+		    if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+			{
+				DestroyPlayerObject(j, PSO_Jogador[j][PSO_OID][psoid]);
+				PSO_Jogador[j][PSO_OID][psoid] = 0;
+				#if PSO_MULTI_SCRIPTS
+                	PS_JogDefInt(j, "PSO_TotalObjetos", PS_JogPegarInt(j, "PSO_TotalObjetos")-1);
+                #else
+                    PSO_Jogador[j][PSO_TotalObjetos]--;
+				#endif
+			}
+	    }
+	}
+	return 1;
+}
+
+stock pso_MoverObjeto(psoid, Float:x, Float:y, Float:z, Float:__rx, Float:_ry, Float:_rz, Float:velocidade)
+{
+	if(!PSO_Objetos[psoid][PSO_S] || velocidade < 0.0) return 0;
+	if(PSO_Objetos[psoid][PSO_M] != 0.0)
+	{
+		if(PSO_Objetos[psoid][PSO_TimerM]) KillTimer(PSO_Objetos[psoid][PSO_TimerM]);
+		PSO_Objetos[psoid][PSO_M] = 0.0;
+		if(PSO_Objetos[psoid][PSO_JID] == -1)
+		{
+			for(new j; j < MAX_PLAYERS; j++)
+			{
+			    if(ps_IsPlayerConnected(j))	if(PSO_Jogador[j][PSO_Ms][psoid]) PSO_Jogador[j][PSO_Ms][psoid] = false;
+			}
+		}
+		else if(PSO_Jogador[PSO_Objetos[psoid][PSO_JID]][PSO_Ms][psoid])
+		{
+			PSO_Jogador[PSO_Objetos[psoid][PSO_JID]][PSO_Ms][psoid] = false;
+		}
+	}
+	new Float:psopos[3];
+	psopos[0] = x-PSO_Objetos[psoid][PSO_Pos][0],
+	psopos[1] = y-PSO_Objetos[psoid][PSO_Pos][1],
+	psopos[2] = z-PSO_Objetos[psoid][PSO_Pos][2],
+	PSO_Objetos[psoid][PSO_Pos][6] = x,
+	PSO_Objetos[psoid][PSO_Pos][7] = y,
+	PSO_Objetos[psoid][PSO_Pos][8] = z,
+	PSO_Objetos[psoid][PSO_M] = velocidade;
+	new Float:maiortempo = psopos[0];
+	for(new i; i < 3; i++)
+	{
+		if(i > 0)
+  		{
+		    if(psopos[i] > psopos[i-1]) maiortempo = psopos[i];
+		}
+	}
+	PSO_Objetos[psoid][PSO_TimerM] = SetTimerEx("pso_MovendoObjeto", 1000, 0, "dfff", psoid, x, y, z);
+	return PSO_TempoMoverMS(maiortempo, velocidade);
+}
+
+stock pso_PararMovimentoObjeto(psoid)
+{
+	if(!PSO_Objetos[psoid][PSO_S] || !PSO_Objetos[psoid][PSO_M]) return 0;
+	PSO_Objetos[psoid][PSO_M] = 0.0;
+	if(PSO_Objetos[psoid][PSO_TimerM]) KillTimer(PSO_Objetos[psoid][PSO_TimerM]);
+	if(PSO_Objetos[psoid][PSO_JID] == -1)
+	{
+		for(new j; j < MAX_PLAYERS; j++)
+		{
+		    if(ps_IsPlayerConnected(j))
+		    {
+				if(PSO_Jogador[j][PSO_OID][psoid] != 0)
+				{
+					StopPlayerObject(j, PSO_Jogador[j][PSO_OID][psoid]);
+	   				PSO_Jogador[j][PSO_Ms][psoid] = false;
+				}
+			}
+		}
+		CallLocalFunction("pso_ObjetoMovido", "d", psoid);
+	}
+	else
+	{
+	    if(PSO_Jogador[PSO_Objetos[psoid][PSO_JID]][PSO_Ms][psoid])
+	    {
+			PSO_Jogador[PSO_Objetos[psoid][PSO_JID]][PSO_Ms][psoid] = false;
+			StopPlayerObject(PSO_Objetos[psoid][PSO_JID], PSO_Jogador[PSO_Objetos[psoid][PSO_JID]][PSO_OID][psoid]);
+		}
+		CallLocalFunction("pso_ObjetoJogadorMovido", "dd", PSO_Objetos[psoid][PSO_JID], psoid);
+	}
+	return 1;
+}

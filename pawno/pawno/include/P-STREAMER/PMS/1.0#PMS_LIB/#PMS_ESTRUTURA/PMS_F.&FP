@@ -1,0 +1,57 @@
+/*
+*
+*	-= PMS ESTRUTURA =-
+*	Protioso MapIcon Streamer
+*	Autor: Protioso ([VGS]Protioso_OC)
+*
+*/
+
+stock pms_CriarMapIcon(Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao = PMS_RAIO_STREAM_PADRAO, virtualword = -1)
+{
+	if(!pms_ModeloValido(modeloid))
+	{
+	    printf("[PMS]: Impossivel criar MapIcon com modelo id %d. Modelos de 1 a 63", modeloid);
+	    return 0;
+	}
+	new idd = PMS_ProcurarIDDisponivel();
+	if(!idd)
+	{
+		printf("[PMS]: Limite de MapIcon's exedido (PMS_MAX_MAPICON %d)!", PMS_MAX_MAPICON);
+		return 0;
+	}
+    PMS_CRIANDO_MAPICON;
+	PMS_MapIcon[idd][PMS_JID] = -1;
+	return idd;
+}
+
+stock pms_CriarMapIconJogador(playerid, Float:x, Float:y, Float:z, modeloid, cor, Float:raio_visualizacao = PMS_RAIO_STREAM_PADRAO, virtualword = -1)
+{
+	if(!pms_ModeloValido(modeloid))
+	{
+	    printf("[PMS]: Impossivel criar MapIcon com modelo id %d. Modelos de 1 a 63", modeloid);
+	    return 0;
+	}
+	new idd = PMS_ProcurarIDDisponivel();
+	if(!idd)
+	{
+		printf("[PMS]: Limite de MapIcon's exedido (PMS_MAX_MAPICON %d)!", PMS_MAX_MAPICON);
+		return 0;
+	}
+    PMS_CRIANDO_MAPICON;
+	PMS_MapIcon[idd][PMS_JID] = playerid;
+	return idd;
+}
+
+stock pms_RemoverMapIcon(pmsid)
+{
+	if(!PMS_MapIcon[pmsid][PMS_S]) return 0;
+	PMS_MapIcon[pmsid][PMS_S] = false;
+	PMS_AjustarSistema(2);
+	return 1;
+}
+
+stock pms_ModeloValido(modeloid)
+{
+	if(modeloid > 0 && modeloid < 64) return 1;
+	return 0;
+}

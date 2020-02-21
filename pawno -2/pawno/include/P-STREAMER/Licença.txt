@@ -1,0 +1,20 @@
+ Protioso Streamer - P-StREAMER 1.0
+ Arquivos editáveis: 
+			PSO_CONFIG_GERAL.inc
+			PSC_CONFIG_GERAL.inc
+			PGD_CONFIG_GERAL.inc
+			PMS_CONFIG_GERAL.inc
+			PS_CONFIG_MAX_PLAYERS.inc
+
+ Publicações de scripts de minha autoria: www.forum.vgsclan.net
+
+------------------------------------------------------------------------
+
+     Copyright (c)  2008/2010 Protioso ([VGS]Protioso_OC).
+    É garantida a permissão para copiar, distribuir e/ou modificar este
+    documento sob os termos da Licença de Documentação Livre GNU (GNU
+    Free Documentation License), Versão 1.2 ou qualquer versão posterior
+    publicada pela Free Software Foundation; sem Seções Invariantes,
+    Textos de Capa Frontal, e sem Textos de Quarta Capa. Uma cópia da
+    licença é incluída na seção intitulada "GNU Free Documentation
+    License".
